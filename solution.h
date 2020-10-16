@@ -1,0 +1,521 @@
+#ifndef LEETCODEMAC_SOLUTION_H
+#define LEETCODEMAC_SOLUTION_H
+
+#include <vector>
+#include <unordered_map>
+#include <map>
+#include <algorithm>
+#include <string>
+#include <queue>
+
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+
+    ListNode(int x) : val(x), next(NULL) {}
+};
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+};
+
+class Solution {
+    int numSubmat(vector<vector<int>> &mat) {
+        int n = mat.size();
+        int m = mat[0].size();
+        vector<vector<int>> row(n, vector<int>(m, 0));
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                if (j == 0) {
+                    row[i][j] = mat[i][j];
+                } else if (mat[i][j]) {
+                    row[i][j] = row[i][j - 1] + 1;
+                } else {
+                    row[i][j] = 0;
+                }
+            }
+        }
+        int ans = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                int col = row[i][j];
+                for (int k = i; k >= 0 && col; --k) {
+                    col = min(col, row[k][j]);
+                    ans += col;
+                }
+            }
+        }
+        return ans;
+    }
+
+    int knightDialer(int n) {
+        const int m = 1000000007;
+        vector<vector<unsigned long>> dp(n, vector<unsigned long>(10, 1));
+        for (int i = 1; i < n; i++) {
+            dp[i][1] = (dp[i - 1][6] + dp[i - 1][8]) % m;
+            dp[i][2] = (dp[i - 1][7] + dp[i - 1][9]) % m;
+            dp[i][3] = (dp[i - 1][4] + dp[i - 1][8]) % m;
+            dp[i][4] = (dp[i - 1][3] + dp[i - 1][9] + dp[i - 1][0]) % m;
+            dp[i][5] = 0;
+            dp[i][6] = (dp[i - 1][1] + dp[i - 1][7] + dp[i - 1][0]) % m;
+            dp[i][7] = (dp[i - 1][2] + dp[i - 1][6]) % m;
+            dp[i][8] = (dp[i - 1][1] + dp[i - 1][3]) % m;
+            dp[i][9] = (dp[i - 1][4] + dp[i - 1][2]) % m;
+            dp[i][0] = (dp[i - 1][6] + dp[i - 1][4]) % m;
+        }
+        int res = 0;
+        for (int i = 0; i < 10; i++) {
+            res = (res + dp[n - 1][i]) % m;
+        }
+        return res;
+    }
+
+    int findNumberOfLIS(vector<int> &nums) {
+        if (!nums.size()) {
+            return 0;
+        }
+        int n = nums.size();
+        vector<int> dp(n, 1);
+        vector<int> counter(n, 1);
+        int maxtmp = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < i; ++j) {
+                if (nums[i] > nums[j]) {
+                    if (dp[j] + 1 > dp[i]) {
+                        dp[i] = max(dp[i], dp[j] + 1);
+                        counter[i] = counter[j];
+                    } else if (dp[j] + 1 == dp[i]) {
+                        counter[i] += counter[j];
+                    }
+                }
+            }
+            maxtmp = max(maxtmp, dp[i]);
+        }
+        int res = 0;
+        for (int i = 0; i < n; i++) {
+            if (dp[i] == maxtmp)
+                res += counter[i];
+        }
+        return res;
+    }
+
+    vector<int> findMode(TreeNode *root) {
+        unordered_map<int, int> map{};
+        vector<int> res{};
+        findModeHelp(map, root);
+        vector<pair<int, int>> vec(map.begin(), map.end());
+        sort(vec.begin(), vec.end(), [](const pair<int, int> &a, const pair<int, int> &b) {
+            return a.second > b.second;
+        });
+        for (int i = 0; i < vec.size(); i++) {
+            if (vec[i].second == vec[0].second) {
+                res.push_back(vec[i].first);
+            }
+        }
+        return res;
+    }
+
+    void findModeHelp(unordered_map<int, int> &map, TreeNode *root) {
+        if (root == nullptr)
+            return;
+        findModeHelp(map, root->left);
+        map[root->val]++;
+        findModeHelp(map, root->right);
+    }
+
+    bool canPartitionKSubsets(vector<int> &nums, int k) {
+        int maxNum = 0;
+        auto sum = 0;
+        int n = nums.size();
+        for (int i = 0; i < n; i++) {
+            sum += nums[i];
+            maxNum = max(maxNum, nums[i]);
+        }
+        if (sum % k != 0 || sum / k < maxNum) {
+            return false;
+        }
+        vector<bool> used(n, false);
+        return canPartitionKSubsetsBP(nums, k, sum / k, 0, 0, used);
+    }
+
+    bool canPartitionKSubsetsBP(vector<int> &nums, int k, int target, int cur, int start, vector<bool> &used) {
+        if (k == 0) return true;
+        if (cur == target) {
+            return canPartitionKSubsetsBP(nums, k - 1, target, 0, 0, used);
+        }
+        for (int i = start; i < nums.size(); i++) {
+            if (!used[i] && cur + nums[i] <= target) {
+                used[i] = true;
+                if (canPartitionKSubsetsBP(nums, k, target, cur + nums[i], i + 1, used)) return true;
+                used[i] = false;
+            }
+        }
+        return false;
+    }
+
+    bool delst(vector<int> l, int s, int t) {
+        int k = 0;
+        if (l.size() == 0 || s >= t) {
+            return false;
+        }
+        for (int i = 0; i < l.size(); ++i) {
+            if (l[i] >= s && l[i] <= t) {
+                k++;
+            } else {
+                l[i - k] = l[i];
+            }
+        }
+        return true;
+    }
+
+    ListNode *detectCycle(ListNode *head) {
+        ListNode *fast = head, *slow = head;
+        while (fast != slow) {
+            if (fast == nullptr || fast->next == nullptr) return nullptr;
+            fast = fast->next->next;
+            slow = slow->next;
+        }
+        fast = head;
+        while (fast != slow) {
+            fast = fast->next;
+            slow = slow->next;
+        }
+        return fast;
+    }
+
+    vector<int> sequentialDigits(int low, int high) {
+        vector<int> ans;
+        for (int i = 1; i <= 9; i++) {
+            int num = i;
+            for (int j = i + 1; j <= 9; ++j) {
+                num = num * 10 + j;
+                if (num >= low && num <= high) {
+                    ans.push_back(num);
+                }
+            }
+        }
+        sort(ans.begin(), ans.end());
+        return ans;
+    }
+
+    vector<vector<int>> permuteUnique(vector<int> &nums) {
+        vector<vector<int>> ans;
+        vector<int> path;
+        vector<bool> visit(nums.size());
+        sort(nums.begin(), nums.end());
+        permuteUniqueBP(nums, ans, path, visit);
+        return ans;
+    }
+
+    void permuteUniqueBP(vector<int> &nums, vector<vector<int>> &ans, vector<int> &path, vector<bool> &visit) {
+        if (path.size() == nums.size()) {
+            ans.push_back(path);
+            return;
+        }
+        for (int i = 0; i < nums.size(); ++i) {
+            if (visit[i]) continue;
+            if (i > 0 && nums[i] == nums[i - 1] && !visit[i - 1]) continue;
+            visit[i] = true;
+            path.push_back(nums[i]);
+            permuteUniqueBP(nums, ans, path, visit);
+            path.pop_back();
+            visit[i] = false;
+        }
+    }
+
+    int getMaximumGoldDir[4][2] = {{-1, 0},
+                                   {1,  0},
+                                   {0,  1},
+                                   {0,  -1}};
+
+    int getMaximumGold(vector<vector<int>> &grid) {
+        int ans = 0;
+        for (int i = 0; i < grid.size(); ++i) {
+            for (int j = 0; j < grid[0].size(); ++j) {
+                if (grid[i][j] != 0) {
+                    ans = max(ans, getMaximumGoldDFS(grid, i, j));
+                }
+            }
+        }
+        return ans;
+    }
+
+    int getMaximumGoldDFS(vector<vector<int>> &grid, int x, int y) {
+        int tmax = 0;
+        int tmp = grid[x][y];
+        grid[x][y] = 0;
+        for (auto d:getMaximumGoldDir) {
+            int newX = x + d[0];
+            int newY = y + d[1];
+            if (newX < 0 || newX >= grid.size() || y < 0 || y >= grid.size() || grid[x][y] == 0) return 0;
+            tmax = max(tmax, getMaximumGoldDFS(grid, newX, newY));
+        }
+        grid[x][y] = tmp;
+        return tmax + grid[x][y];
+    }
+
+    int countNumbersWithUniqueDigits(int n) {
+        if (n == 0) return 1;
+        vector<int> dp(n + 1);
+        dp[0] = 1;
+        dp[1] = 10;
+        for (int i = 2; i <= n; ++i) {
+            int tmp = 9, k = 9;
+            for (int j = 1; j < i; j++) {
+                tmp *= k;
+                k--;
+            }
+            dp[i] = tmp + dp[i - 1];
+        }
+        return dp[n];
+    }
+
+    vector<int> diffWaysToCompute(string input) {
+        vector<int> res;
+        int i = 0;
+        int num = 0;
+        while (i < input.size() && !diffWaysToComputeOP(input[i])) {
+            num = num * 10 + (input[i] - '0');
+            i++;
+        }
+        if (i == res.size()) {
+            res.push_back(num);
+            return res;
+        }
+        for (int i = 0; i < input.size(); ++i) {
+            if (diffWaysToComputeOP(input[i])) {
+                vector<int> left = diffWaysToCompute(input.substr(0, i));
+                vector<int> right = diffWaysToCompute(input.substr(i, input.size()));
+                for (int j:left) {
+                    for (int k:right) {
+                        res.push_back(diffWaysToComputeCal(input[i], j, k));
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    int diffWaysToComputeCal(char op, int a, int b) {
+        switch (op) {
+            case '+':
+                return a + b;
+                break;
+            case '-':
+                return a - b;
+                break;
+            case '*':
+                return a * b;
+                break;
+            case '/':
+                return a / b;
+        }
+    }
+
+    bool diffWaysToComputeOP(char o) {
+        return o == '+' || o == '-' || o == '*' || o == '/';
+    }
+
+    int getMinimumDifference(TreeNode *root) {
+        vector<int> path;
+        getMinimumDifferenceHelp(root, path);
+        int ans = INT_MAX;
+        for (int i = 1; i < path.size(); ++i) {
+            int t = abs(path[i] - path[i - 1]);
+            ans = min(ans, t);
+        }
+        return ans;
+    }
+
+    void getMinimumDifferenceHelp(TreeNode *root, vector<int> &ans) {
+        if (root == nullptr) return;
+        getMinimumDifferenceHelp(root->left, ans);
+        ans.push_back(root->val);
+        getMinimumDifferenceHelp(root->right, ans);
+    }
+
+    ListNode *swapPairs(ListNode *head) {
+        ListNode *pre = new ListNode(0);
+        pre->next = head;
+        ListNode *tmp = pre;
+        while (tmp->next != nullptr && tmp->next->next != nullptr) {
+            ListNode *start = tmp->next;
+            ListNode *end = tmp->next->next;
+            tmp->next = end;
+            start->next = end->next;
+            end->next = start;
+            tmp = start;
+        }
+        return pre->next;
+    }
+
+    class Node {
+    public:
+        int val;
+        Node *left;
+        Node *right;
+
+        Node() {}
+
+        Node(int _val) {
+            val = _val;
+            left = NULL;
+            right = NULL;
+        }
+
+        Node(int _val, Node *_left, Node *_right) {
+            val = _val;
+            left = _left;
+            right = _right;
+        }
+    };
+
+    Node *treeToDoublyList(Node *root) {
+        if (root == nullptr) return root;
+        Node *pre, *head;
+        treeToDoublyListHelp(root, pre, head);
+        head->left = pre;
+        pre->right = head;
+        return head;
+    }
+
+    void treeToDoublyListHelp(Node *root, Node *pre, Node *head) {
+        if (root == nullptr) return;
+        treeToDoublyListHelp(root->left, pre, head);
+        if (pre != nullptr) pre->right = root;
+        else head = root;
+        root->left = pre;
+        pre = root;
+        treeToDoublyListHelp(root->right, pre, head);
+    }
+
+    vector<vector<int>> kClosest(vector<vector<int>> &points, int K) {
+        vector<vector<int>> res(K);
+        auto cmp = [this](const vector<int> &a, const vector<int> &b) {
+            return this->kClosestDist(a) < this->kClosestDist(b);
+        };
+        priority_queue<vector<int>, vector<vector<int>>, decltype(cmp)> q(cmp);
+        for (auto &a:points) {
+            q.push(a);
+            if (q.size() > K) q.pop();
+        }
+        for (int i = 0; i < K; ++i) {
+            res[i] = q.top();
+            q.pop();
+        }
+        return res;
+    }
+
+    int kClosestDist(const vector<int> &p) {
+        return p[0] * p[0] + p[1] * p[1];
+    }
+
+    vector<int> smallestK(vector<int> &arr, int k) {
+        vector<int> res(k);
+        priority_queue<int> q;
+        for (int a:arr) {
+            q.push(a);
+            if (q.size() > k) q.pop();
+        }
+        while (!q.empty()) {
+            res.push_back(q.top());
+            q.pop();
+        }
+        return res;
+    }
+
+    bool searchMatrix(vector<vector<int>> &matrix, int target) {
+        if (matrix.size() == 0 || matrix[0].size() == 0) return false;
+        int row = 0, col = matrix[0].size() - 1;
+        while (row != matrix.size() && col != -1) {
+            if (matrix[row][col] > target) {
+                col -= 1;
+            } else if (matrix[row][col] < target) {
+                row += 1;
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    ListNode *mergeKLists(vector<ListNode *> &lists) {
+        if (lists.size() == 0) return nullptr;
+        return mergeKListsHelp(lists, 0, lists.size() - 1);
+    }
+
+    ListNode *mergeKListsHelp(vector<ListNode *> &lists, int left, int right) {
+        if (left >= right) return lists[left];
+        int mid = (left + right) / 2;
+        ListNode *l1 = mergeKListsHelp(lists, left, mid);
+        ListNode *l2 = mergeKListsHelp(lists, mid + 1, right);
+        return mergeKListsTwo(l1, l2);
+    }
+
+    ListNode *mergeKListsTwo(ListNode *l1, ListNode *l2) {
+        auto *res = new ListNode(0);
+        ListNode *tmp = res;
+        while (l1 != nullptr && l2 != nullptr) {
+            if (l1->val < l2->val) {
+                res->next = l1;
+                l1 = l1->next;
+            } else {
+                res->next = l2;
+                l2 = l2->next;
+            }
+            res = res->next;
+        }
+        if (l1 == nullptr) res->next = l2;
+        if (l2 == nullptr) res->next = l1;
+        return tmp->next;
+    }
+
+    int maxCoins(vector<int> &nums) {
+        if (nums.size() == 0) return 0;
+        vector<int> tmp(nums.size() + 2);
+        tmp[0] = 1;
+        for (int i = 1; i <= nums.size(); ++i) {
+            tmp[i] = nums[i - 1];
+        }
+        tmp[nums.size() + 1] = 1;
+        vector<vector<int>> cache(tmp.size(), vector<int>(tmp.size()));
+        return maxCoinsDP(tmp,0,tmp.size()-1,cache);
+    }
+
+    int maxCoinsDP(vector<int> &nums, int begin, int end, vector<vector<int>>& cache) {
+        if (begin == end - 1) return 0;
+        if (cache[begin][end] != 0) return cache[begin][end];
+        int fmax = 0;
+        for (int i = begin + 1; i < end; i++) {
+            int tmp = maxCoinsDP(nums, begin, i, cache) + maxCoinsDP(nums, i, end, cache) +
+                      nums[i] * nums[begin] * nums[end];
+            fmax = max(fmax, tmp);
+        }
+        cache[begin][end] = fmax;
+        return fmax;
+    }
+
+    vector<int> sortedSquares(vector<int>& A) {
+        int n=A.size();
+        vector<int> ans(n);
+        for(int i=0,j=n-1,pos=n-1;i<=j;){
+            if(A[i]*A[i]>A[j]*A[j]){
+                ans[pos]=A[i]*A[i];
+                ++i;
+            }else{
+                ans[pos]=A[j]*A[j];
+                --j;
+            }
+            --pos;
+        }
+        return ans;
+    }
+};
+
+#endif //LEETCODEMAC_SOLUTION_H
