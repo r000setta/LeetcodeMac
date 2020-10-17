@@ -1,6 +1,7 @@
 #include <iostream>
+#include "solution.h"
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
-    return 0;
+    Solution s;
+    auto n=s.solveNQueens(4);
 }

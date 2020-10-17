@@ -26,6 +26,7 @@ struct TreeNode {
 };
 
 class Solution {
+public:
     int numSubmat(vector<vector<int>> &mat) {
         int n = mat.size();
         int m = mat[0].size();
@@ -485,10 +486,10 @@ class Solution {
         }
         tmp[nums.size() + 1] = 1;
         vector<vector<int>> cache(tmp.size(), vector<int>(tmp.size()));
-        return maxCoinsDP(tmp,0,tmp.size()-1,cache);
+        return maxCoinsDP(tmp, 0, tmp.size() - 1, cache);
     }
 
-    int maxCoinsDP(vector<int> &nums, int begin, int end, vector<vector<int>>& cache) {
+    int maxCoinsDP(vector<int> &nums, int begin, int end, vector<vector<int>> &cache) {
         if (begin == end - 1) return 0;
         if (cache[begin][end] != 0) return cache[begin][end];
         int fmax = 0;
@@ -501,20 +502,197 @@ class Solution {
         return fmax;
     }
 
-    vector<int> sortedSquares(vector<int>& A) {
-        int n=A.size();
+    vector<int> sortedSquares(vector<int> &A) {
+        int n = A.size();
         vector<int> ans(n);
-        for(int i=0,j=n-1,pos=n-1;i<=j;){
-            if(A[i]*A[i]>A[j]*A[j]){
-                ans[pos]=A[i]*A[i];
+        for (int i = 0, j = n - 1, pos = n - 1; i <= j;) {
+            if (A[i] * A[i] > A[j] * A[j]) {
+                ans[pos] = A[i] * A[i];
                 ++i;
-            }else{
-                ans[pos]=A[j]*A[j];
+            } else {
+                ans[pos] = A[j] * A[j];
                 --j;
             }
             --pos;
         }
         return ans;
+    }
+
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> res;
+        vector<int> path;
+        vector<bool> col(n);
+        vector<bool> main(2 * n - 1);
+        vector<bool> sub(2 * n - 1);
+        solveNQueensBP(res, n, path, col, main, sub, 0);
+        return res;
+    }
+
+    void solveNQueensBP(vector<vector<string>> &res, int n, vector<int> &path, vector<bool> &col, vector<bool> &main,
+                        vector<bool> &sub, int row) {
+        if (row == n) {
+            auto board = NQconvert(path, n);
+            res.emplace_back(board);
+            return;
+        }
+        for (int j = 0; j < n; ++j) {
+            if (!col[j] && !main[row + j] && !sub[row - j + n - 1]) {
+                path.push_back(j);
+                col[j] = true;
+                main[row + j] = true;
+                sub[row - j + n - 1] = true;
+                solveNQueensBP(res, n, path, col, main, sub, row + 1);
+                sub[row - j + n - 1] = false;
+                main[row + j] = false;
+                col[j] = false;
+                path.pop_back();
+            }
+        }
+    }
+
+    vector<string> NQconvert(vector<int> &path, int n) {
+        vector<string> res;
+        for (auto i:path) {
+            string row(n, '.');
+            row[i] = 'Q';
+            res.emplace_back(row);
+        }
+        return res;
+    }
+
+    int totalNQueens(int n) {
+        int res;
+        vector<int> path;
+        vector<bool> col(n);
+        vector<bool> main(2 * n - 1);
+        vector<bool> sub(2 * n - 1);
+        solveNQueensBP2(res, n, path, col, main, sub, 0);
+        return res;
+    }
+
+    void solveNQueensBP2(int &res, int n, vector<int> &path, vector<bool> &col, vector<bool> &main,
+                         vector<bool> &sub, int row) {
+        if (row == n) {
+            res++;
+            return;
+        }
+        for (int j = 0; j < n; ++j) {
+            if (!col[j] && !main[row + j] && !sub[row - j + n - 1]) {
+                path.push_back(j);
+                col[j] = true;
+                main[row + j] = true;
+                sub[row - j + n - 1] = true;
+                solveNQueensBP2(res, n, path, col, main, sub, row + 1);
+                sub[row - j + n - 1] = false;
+                main[row + j] = false;
+                col[j] = false;
+                path.pop_back();
+            }
+        }
+    }
+
+    static constexpr int TARGET = 24;
+    static constexpr double EPSILON = 1e-6;
+    static constexpr int ADD = 0, MUL = 1, SUB = 2, DIV = 3;
+
+    bool judgePoint24(vector<int> &nums) {
+        vector<double> l;
+        for (int n:nums) {
+            l.emplace_back(static_cast<double>(n));
+        }
+        return judgePoint24Help(l);
+    }
+
+    bool judgePoint24Help(vector<double> &l) {
+        if (l.empty()) {
+            return false;
+        }
+        if (l.size() == 1) {
+            return fabs(l[0] - TARGET) < EPSILON;
+        }
+        int size = l.size();
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; ++j) {
+                if (i != j) {
+                    vector<double> list2 = vector<double>();
+                    for (int k = 0; k < size; ++k) {
+                        if (k != i && k != j) {
+                            list2.emplace_back(l[k]);
+                        }
+                    }
+                    for (int k = 0; k < 4; ++k) {
+                        if (k < 2 && i > j) {
+                            continue;
+                        }
+                        if (k == ADD) {
+                            list2.emplace_back(l[i] + l[j]);
+                        } else if (k == MUL) {
+                            list2.emplace_back(l[i] * l[j]);
+                        } else if (k == SUB) {
+                            list2.emplace_back(l[i] - l[j]);
+                        } else if (k == DIV) {
+                            if (fabs(l[j]) < EPSILON) {
+                                continue;
+                            }
+                            list2.emplace_back(l[i] / l[j]);
+                        }
+                        if (judgePoint24Help(list2)) {
+                            return true;
+                        }
+                        list2.pop_back();
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    bool rowUsed[9][10]{false};
+    bool colUsed[9][10]{false};
+    bool boxUsed[3][3][10]{false};
+
+    void solveSudoku(vector<vector<char>> &board) {
+        for (int i = 0; i < board.size(); ++i) {
+            for (int j = 0; j < board[0].size(); ++j) {
+                int num = board[i][j] - '0';
+                if (num >= 1 && num <= 9) {
+                    rowUsed[i][num] = true;
+                    colUsed[j][num] = true;
+                    boxUsed[i / 3][j / 3][num] = true;
+                }
+            }
+        }
+        solveSudokuBP(board, 0, 0);
+    }
+
+    bool solveSudokuBP(vector<vector<char>> &board, int row, int col) {
+        if (col == board[0].size()) {
+            col = 0;
+            row++;
+            if (row == board.size()) {
+                return true;
+            }
+        }
+        if (board[row][col] == '.') {
+            for (int i = 1; i <= 9; ++i) {
+                if (!rowUsed[row][i] && !colUsed[col][i] && !boxUsed[row / 3][col / 3][i]) {
+                    rowUsed[row][i] = true;
+                    colUsed[col][i] = true;
+                    boxUsed[row / 3][col / 3][i] = true;
+                    board[row][col] = (char) (i + '0');
+                    if (solveSudokuBP(board, row, col + 1)) {
+                        return true;
+                    }
+                    rowUsed[row][i] = false;
+                    colUsed[col][i] = false;
+                    boxUsed[row / 3][col / 3][i] = false;
+                    board[row][col] = '.';
+                }
+            }
+        } else {
+            return solveSudokuBP(board, row, col + 1);
+        }
+        return false;
     }
 };
 
