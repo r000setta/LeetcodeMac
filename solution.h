@@ -694,6 +694,151 @@ public:
         }
         return false;
     }
+
+    ListNode *removeNthFromEnd(ListNode *head, int n) {
+        ListNode *dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode *p = dummy;
+        ListNode *q = dummy;
+        for (int i = 0; i < n + 1; i++)
+            q = q->next;
+        while (q) {
+            p = p->next;
+            q = q->next;
+        }
+        ListNode *del = p->next;
+        p->next = p->next->next;
+        delete del;
+
+        ListNode *ret = dummy->next;
+        delete dummy;
+        return ret;
+    }
+
+    ListNode *oddEvenList(ListNode *head) {
+        if (head == nullptr) return nullptr;
+        ListNode *odd = head, *even = head->next, *evenHead = even;
+        while (even != nullptr && even->next != nullptr) {
+            odd->next = even->next;
+            odd = odd->next;
+            even->next = odd->next;
+            even = even->next;
+        }
+        odd->next = evenHead;
+        return head;
+    }
+
+    bool isValidSudoku(vector<vector<char>> &board) {
+        for (int i = 0; i < board.size(); ++i) {
+            for (int j = 0; j < board[0].size(); ++j) {
+                int num = board[i][j] - '0';
+                if (num >= 1 && num <= 9) {
+                    if (rowUsed[i][num] || colUsed[j][num] || boxUsed[i / 3][j / 3][num])
+                        return false;
+                    rowUsed[i][num] = true;
+                    colUsed[j][num] = true;
+                    boxUsed[i / 3][j / 3][num] = true;
+                }
+            }
+        }
+        return true;
+    }
+
+    void setZeroes(vector<vector<int>> &matrix) {
+        for (int i = 0; i < matrix.size(); ++i) {
+            for (int j = 0; j < matrix[0].size(); ++j) {
+                if (matrix[i][j] == 0) {
+                    for (int k = 0; k < matrix[0].size(); ++k) {
+                        if (matrix[i][k] != 0) matrix[i][k] = -10000;
+                    }
+                    for (int k = 0; k < matrix.size(); ++k) {
+                        if (matrix[i][k] != 0) matrix[k][j] = -10000;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < matrix.size(); ++i) {
+            for (int j = 0; j < matrix[0].size(); ++j) {
+                if (matrix[i][j] == -10000) matrix[i][j] = 0;
+            }
+        }
+    }
+
+    vector<vector<string>> groupAnagrams(vector<string> &strs) {
+        vector<vector<string>> res;
+        map<string, int> m;
+        int idx = 0;
+        for (int i = 0; i < strs.size(); ++i) {
+            string tmp = strs[i];
+            sort(tmp.begin(), tmp.end());
+            if (m.find(tmp) == m.end()) {
+                m[tmp] = idx++;
+                vector<string> vec;
+                vec.emplace_back(strs[i]);
+                res.emplace_back(vec);
+            } else {
+                res[m[tmp]].emplace_back(strs[i]);
+            }
+        }
+        return res;
+    }
+
+    ListNode *ReverseList(ListNode *pHead) {
+        ListNode *dummy = new ListNode(0);
+        ListNode *cur = pHead;
+        ListNode *nex = nullptr;
+        while (cur != nullptr) {
+            nex = cur->next;
+            cur->next = dummy->next;
+            dummy->next = cur;
+            cur = nex;
+        }
+        return dummy->next;
+    }
+
+    bool hasCycle(ListNode *head) {
+        ListNode *slow = head, *fast = head;
+        while (fast != nullptr && fast->next != nullptr) {
+            fast = fast->next->next;
+            slow = slow->next;
+            if (fast == slow) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    vector<vector<int> > threeOrders(TreeNode *root) {
+        vector<int> pre;
+        vector<int> in;
+        vector<int> post;
+        threeOrdersPre(root, pre);
+        threeOrdersIn(root, in);
+        threeOrdersPost(root, post);
+        vector<vector<int>> res{pre, in, post};
+        return res;
+    }
+
+    void threeOrdersPre(TreeNode *root, vector<int>& pre) {
+        if (root == nullptr) return;
+        pre.emplace_back(root->val);
+        threeOrdersPre(root->left, pre);
+        threeOrdersPre(root->right, pre);
+    }
+
+    void threeOrdersIn(TreeNode *root, vector<int>& pre) {
+        if (root == nullptr) return;
+        threeOrdersIn(root->left, pre);
+        pre.emplace_back(root->val);
+        threeOrdersIn(root->right, pre);
+    }
+
+    void threeOrdersPost(TreeNode *root, vector<int>& pre) {
+        if (root == nullptr) return;
+        threeOrdersPost(root->left, pre);
+        threeOrdersPost(root->right, pre);
+        pre.emplace_back(root->val);
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION_H
