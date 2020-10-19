@@ -3,4 +3,4 @@ project(LeetcodeMac)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(LeetcodeMac main.cpp solution.h)
+add_executable(LeetcodeMac main.cpp solution.h NumArray.h Calender.h)

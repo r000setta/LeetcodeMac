@@ -819,25 +819,45 @@ public:
         return res;
     }
 
-    void threeOrdersPre(TreeNode *root, vector<int>& pre) {
+    void threeOrdersPre(TreeNode *root, vector<int> &pre) {
         if (root == nullptr) return;
         pre.emplace_back(root->val);
         threeOrdersPre(root->left, pre);
         threeOrdersPre(root->right, pre);
     }
 
-    void threeOrdersIn(TreeNode *root, vector<int>& pre) {
+    void threeOrdersIn(TreeNode *root, vector<int> &pre) {
         if (root == nullptr) return;
         threeOrdersIn(root->left, pre);
         pre.emplace_back(root->val);
         threeOrdersIn(root->right, pre);
     }
 
-    void threeOrdersPost(TreeNode *root, vector<int>& pre) {
+    void threeOrdersPost(TreeNode *root, vector<int> &pre) {
         if (root == nullptr) return;
         threeOrdersPost(root->left, pre);
         threeOrdersPost(root->right, pre);
         pre.emplace_back(root->val);
+    }
+
+    bool backspaceCompare(string S, string T) {
+        return backspaceCompareHelp(S) == backspaceCompareHelp(T);
+    }
+
+    string backspaceCompareHelp(string s) {
+        string res;
+        for (char ch:s) {
+            if (ch != '#') {
+                res.push_back(ch);
+            } else if (!res.empty()) {
+                res.pop_back();
+            }
+        }
+        return res;
+    }
+
+    int minNumberOperations(vector<int>& target) {
+        
     }
 };
 
