@@ -856,8 +856,170 @@ public:
         return res;
     }
 
-    int minNumberOperations(vector<int>& target) {
-        
+    void reorderList(ListNode *head) {
+        if (head == nullptr) return;
+        ListNode *slow = head, *fast = head;
+        while (fast->next != nullptr && fast->next->next != nullptr) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        ListNode *newHead = slow->next;
+        slow->next = nullptr;
+        newHead = reverseList(newHead);
+        while (newHead != nullptr) {
+            ListNode *tmp = newHead->next;
+            newHead->next = head->next;
+            head->next = newHead;
+            head = newHead->next;
+            newHead = tmp;
+        }
+    }
+
+    ListNode *reverseList(ListNode *head) {
+        ListNode *res = new ListNode(0);
+        ListNode *cur = head, *nex = nullptr;
+        while (cur != nullptr) {
+            nex = cur->next;
+            cur->next = res->next;
+            res->next = cur;
+            cur = nex;
+        }
+        return res->next;
+    }
+
+    int minDep(TreeNode *root) {
+        if (root == nullptr) return 0;
+        int left = minDep(root->left);
+        int right = minDep(root->right);
+        if (left * right != 0) {
+            return (left > right ? right : left) + 1;
+        } else {
+            return (left > right ? left : right) + 1;
+        }
+    }
+
+    int evalRPN(vector<string> &tokens) {
+        stack<int> stk;
+        for (const auto &t:tokens) {
+            if (!evalRPNisOp(t)) {
+                stk.push(stoi(t));
+            } else {
+                if (t == "+") {
+                    int a1 = stk.top();
+                    stk.pop();
+                    int a2 = stk.top();
+                    stk.pop();
+                    stk.push(a1 + a2);
+                } else if (t == "-") {
+                    int a1 = stk.top();
+                    stk.pop();
+                    int a2 = stk.top();
+                    stk.pop();
+                    stk.push(a1 - a2);
+                } else if (t == "*") {
+                    int a1 = stk.top();
+                    stk.pop();
+                    int a2 = stk.top();
+                    stk.pop();
+                    stk.push(a1 * a2);
+                } else if (t == "/") {
+                    int a1 = stk.top();
+                    stk.pop();
+                    int a2 = stk.top();
+                    stk.pop();
+                    stk.push(a1 / a2);
+                }
+            }
+        }
+        return stk.top();
+    }
+
+    bool evalRPNisOp(string c) {
+        return c == "+" || c == "+" || c == "*" || c == "/";
+    }
+
+    struct Point {
+        int x;
+        int y;
+    };
+
+    int maxPoints(vector<Point> &points) {
+        int size = points.size();
+        if (size <= 2) return size;
+        int res = 0;
+        for (int i = 0; i < size; ++i) {
+            int d = 1;
+            map<float, int> tmp;
+            for (int j = i + 1; j < size; ++j) {
+                if (points[i].x == points[j].x) {
+                    if (points[i].y == points[j].y) {
+                        d++;
+                    } else {
+                        tmp[INT_MAX]++;
+                    }
+                } else {
+                    float k = (points[i].y - points[j].y) * 1.0 / (points[i].x - points[j].x);
+                    tmp[k]++;
+                }
+            }
+            res = max(res, d);
+            for (auto it:tmp) {
+                res = max(res, it.second + d);
+            }
+        }
+        return res;
+    }
+
+    ListNode* sortList(ListNode* head) {
+        if(head==nullptr||head->next==nullptr) return head;
+        ListNode* slow=head,*fast=head;
+        while(fast->next!=nullptr&&fast->next->next!=nullptr){
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        ListNode* newHead=slow->next;
+        slow->next=nullptr;
+        ListNode* left=sortList(head);
+        ListNode* right=sortList(newHead);
+        return mergeList(left, right);
+    }
+
+    ListNode* mergeList(ListNode* a,ListNode *b){
+        ListNode* res=new ListNode(0);
+        ListNode* tmp=res;
+        while(a!=nullptr&&b!=nullptr){
+            if(a->val<b->val){
+                tmp->next=new ListNode(a->val);
+                a=a->next;
+            }else{
+                tmp->next=new ListNode(b->val);
+                b=b->next;
+            }
+            tmp=tmp->next;
+        }
+        tmp->next=(a==nullptr)?b:a;
+        return res->next;
+    }
+
+    ListNode* insertionSortList(ListNode* head) {
+        if(head==nullptr||head->next==nullptr) return head;
+        ListNode* tmp=new ListNode(0);
+        ListNode* p;
+        ListNode* q;
+        ListNode* t;
+        while(head){
+            p=tmp;
+            q=p->next;
+            t=head;
+            head=head->next;
+            while(q&&q->val<t->val){
+                p=p->next;
+                q=q->next;
+            }
+            t->next=q;
+            p->next=t;
+        }
+        return tmp->next;
     }
 };
 
