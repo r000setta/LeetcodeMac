@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <string>
 #include <queue>
+#include <unordered_set>
 
 using namespace std;
 
@@ -970,56 +971,123 @@ public:
         return res;
     }
 
-    ListNode* sortList(ListNode* head) {
-        if(head==nullptr||head->next==nullptr) return head;
-        ListNode* slow=head,*fast=head;
-        while(fast->next!=nullptr&&fast->next->next!=nullptr){
-            fast=fast->next->next;
-            slow=slow->next;
+    ListNode *sortList(ListNode *head) {
+        if (head == nullptr || head->next == nullptr) return head;
+        ListNode *slow = head, *fast = head;
+        while (fast->next != nullptr && fast->next->next != nullptr) {
+            fast = fast->next->next;
+            slow = slow->next;
         }
-        ListNode* newHead=slow->next;
-        slow->next=nullptr;
-        ListNode* left=sortList(head);
-        ListNode* right=sortList(newHead);
+        ListNode *newHead = slow->next;
+        slow->next = nullptr;
+        ListNode *left = sortList(head);
+        ListNode *right = sortList(newHead);
         return mergeList(left, right);
     }
 
-    ListNode* mergeList(ListNode* a,ListNode *b){
-        ListNode* res=new ListNode(0);
-        ListNode* tmp=res;
-        while(a!=nullptr&&b!=nullptr){
-            if(a->val<b->val){
-                tmp->next=new ListNode(a->val);
-                a=a->next;
-            }else{
-                tmp->next=new ListNode(b->val);
-                b=b->next;
+    ListNode *mergeList(ListNode *a, ListNode *b) {
+        ListNode *res = new ListNode(0);
+        ListNode *tmp = res;
+        while (a != nullptr && b != nullptr) {
+            if (a->val < b->val) {
+                tmp->next = new ListNode(a->val);
+                a = a->next;
+            } else {
+                tmp->next = new ListNode(b->val);
+                b = b->next;
             }
-            tmp=tmp->next;
+            tmp = tmp->next;
         }
-        tmp->next=(a==nullptr)?b:a;
+        tmp->next = (a == nullptr) ? b : a;
         return res->next;
     }
 
-    ListNode* insertionSortList(ListNode* head) {
-        if(head==nullptr||head->next==nullptr) return head;
-        ListNode* tmp=new ListNode(0);
-        ListNode* p;
-        ListNode* q;
-        ListNode* t;
-        while(head){
-            p=tmp;
-            q=p->next;
-            t=head;
-            head=head->next;
-            while(q&&q->val<t->val){
-                p=p->next;
-                q=q->next;
+    ListNode *insertionSortList(ListNode *head) {
+        if (head == nullptr || head->next == nullptr) return head;
+        ListNode *tmp = new ListNode(0);
+        ListNode *p;
+        ListNode *q;
+        ListNode *t;
+        while (head) {
+            p = tmp;
+            q = p->next;
+            t = head;
+            head = head->next;
+            while (q && q->val < t->val) {
+                p = p->next;
+                q = q->next;
             }
-            t->next=q;
-            p->next=t;
+            t->next = q;
+            p->next = t;
         }
         return tmp->next;
+    }
+
+    bool isLongPressedName(string name, string typed) {
+        int i = 0, j = 0;
+        while (j < typed.length()) {
+            if (i < name.length() && name[i] == typed[j]) {
+                i++;
+                j++;
+            } else if (j > 0 && typed[j] == typed[j - 1]) {
+                j++;
+            } else {
+                return false;
+            }
+        }
+        return i == name.length();
+    }
+
+    void reorderList2(ListNode *head) {
+        if (head == nullptr) return;
+        ListNode *fast = head, *slow = head;
+        while (fast->next != nullptr && fast->next->next != nullptr) {
+            fast = fast->next->next;
+            slow = slow->next;
+        }
+        ListNode *newHead = slow->next;
+        slow->next = nullptr;
+        newHead = reverseList(newHead);
+        while (newHead) {
+            ListNode *tmp = newHead->next;
+            newHead->next = head->next;
+            head->next = newHead;
+            head = newHead->next;
+            newHead = tmp;
+        }
+    }
+
+    ListNode *detectCycle2(ListNode *head) {
+        ListNode *fast = head, *slow = head;
+        while (true) {
+            if (fast == nullptr || fast->next == nullptr) {
+                return nullptr;
+            }
+            fast = fast->next->next;
+            slow = slow->next;
+            if (fast == slow) break;
+        }
+        fast = head;
+        while (fast != slow) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+        return slow;
+    }
+
+    bool wordBreak(string s, unordered_set<string> &dict) {
+        int len = s.length();
+        vector<bool> dp(len + 1);
+        dp[0] = true;
+        for (int i = 1; i <= len; ++i) {
+            for (int j = i - 1; j >= 0; --j) {
+                if(dp[j]&&dict.count(s.substr(j,i-j))){
+                    dp[i]=true;
+                    break;
+                }
+            }
+        }
+        return dp[len];
     }
 };
 
