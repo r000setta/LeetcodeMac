@@ -1081,13 +1081,93 @@ public:
         dp[0] = true;
         for (int i = 1; i <= len; ++i) {
             for (int j = i - 1; j >= 0; --j) {
-                if(dp[j]&&dict.count(s.substr(j,i-j))){
-                    dp[i]=true;
+                if (dp[j] && dict.count(s.substr(j, i - j))) {
+                    dp[i] = true;
                     break;
                 }
             }
         }
         return dp[len];
+    }
+
+    vector<int> smallerNumbersThanCurrent(vector<int> &nums) {
+        vector<int> res(nums.size());
+        vector<int> cnt(101, 0);
+        for (const int &n:nums) {
+            cnt[n]++;
+        }
+        for (int i = 1; i < cnt.size(); ++i) {
+            cnt[i] += cnt[i - 1];
+        }
+        for (int i = 0; i < nums.size(); ++i) {
+            if (nums[i] == 0) {
+                res[i] = 0;
+            } else {
+                res[i] = cnt[nums[i] - 1];
+            }
+        }
+        return res;
+    }
+
+    bool isMatch(string s, string p) {
+        int n1 = p.size(), n2 = s.size();
+        vector<vector<bool>> dp(n1 + 1, vector<bool>(n2 + 1));
+        dp[0][0] = true;
+        for (int i = 1; i <= n1; i++) {
+            if (p[i - 1] != '*') break;
+            dp[i][0] = true;
+        }
+        for (int i = 1; i <= n1; ++i) {
+            for (int j = 1; j <= n2; ++j) {
+                if (s[i - 1] == p[i - 1] || p[i - 1] == '?') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p[i - 1] == '*') {
+                    dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
+                }
+            }
+        }
+        return dp[n1][n2];
+    }
+
+    int longestCommonSubsequence(string text1, string text2) {
+        int n1 = text1.size(), n2 = text2.size();
+        vector<vector<int>> dp(n1 + 1, vector<int>(n2 + 1));
+        for (int i = 1; i <= n1; ++i) {
+            for (int j = 1; j <= n2; ++j) {
+                if (text1[i - 1] == text2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[n1][n2];
+    }
+
+    int minDistance(string word1, string word2) {
+        int n1 = word1.size(), n2 = word2.size();
+        vector<vector<int>> dp(n1 + 1, vector<int>(n2 + 1));
+        for (int i = 1; i <= n2; ++i) {
+            dp[0][i] = dp[0][i - 1] + 1;
+        }
+        for (int i = 1; i <= n1; ++i) {
+            dp[i][0] = dp[i - 1][0] + 1;
+        }
+        for (int i = 1; i <= n1; ++i) {
+            for (int j = 1; j <= n2; ++j) {
+                if (word1[i - 1] == word2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = min(dp[i - 1][j - 1], min(dp[i][j - 1], dp[i - 1][j])) + 1;
+                }
+            }
+        }
+        return dp[n1][n2];
+    }
+
+    int minDistance2(string word1, string word2) {
+        int t = longestCommonSubsequence(word1, word2);
+        return word1.size() - t + word2.size() - t;
     }
 };
 
