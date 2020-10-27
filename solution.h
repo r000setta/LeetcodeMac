@@ -4,6 +4,7 @@
 #include <vector>
 #include <unordered_map>
 #include <map>
+#include <cmath>
 #include <algorithm>
 #include <string>
 #include <queue>
@@ -1168,6 +1169,122 @@ public:
     int minDistance2(string word1, string word2) {
         int t = longestCommonSubsequence(word1, word2);
         return word1.size() - t + word2.size() - t;
+    }
+
+    bool isMatch2(string s, string p) {
+        int n1 = p.size(), n2 = s.size();
+        vector<vector<int>> dp(n1 + 1, vector<int>(n2 + 1));
+        dp[0][0] = 1;
+        if (p[1] == '*') dp[2][0] = 1;
+        for (int i = 1; i <= n1; ++i) {
+            for (int j = 1; j <= n2; ++j) {
+                if (p[i - 1] == s[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p[i - 1] == '*') {
+                    if (i >= 2) {
+                        if (p[i - 2] != s[j - 1]) {
+                            dp[i][j] = dp[i - 2][j];
+                        } else {
+                            dp[i][j] = dp[i][j - 1] || dp[i - 1][j] || dp[i - 2][j];
+                        }
+                    }
+                } else if (p[i - 1] == '.') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[n1][n2];
+    }
+
+    int maxPoints(vector<vector<int>> &points) {
+        if (points.size() < 3) {
+            return points.size();
+        }
+        int res = 0;
+        for (int i = 0; i < points.size(); ++i) {
+            int dup = 0;
+            int max = 0;
+            unordered_map<string, int> mp;
+            for (int j = i + 1; j < points.size(); ++j) {
+                int x = points[j][0] - points[i][0];
+                int y = points[j][1] - points[i][1];
+                if (x == 0 && y == 0) {
+                    dup++;
+                    continue;
+                }
+                int g = gcd(x, y);
+                x /= g;
+                y /= g;
+                string key = to_string(x) + "@" + to_string(y);
+                if (!mp.count(key)) {
+                    mp.insert(make_pair(key, 1));
+                } else {
+                    mp[key]++;
+                }
+                max = fmax(max, mp[key]);
+            }
+            res = fmax(res, max + dup + 1);
+        }
+        return res;
+    }
+
+    int gcd(int a, int b) {
+        while (b != 0) {
+            int tmp = a % b;
+            a = b;
+            b = tmp;
+        }
+        return a;
+    }
+
+    vector<int> maxSlidingWindow(vector<int> &nums, int k) {
+        if (k == 0) return {};
+        deque<int> window;
+        vector<int> res;
+        for (int i = 0; i < k; ++i) {
+            while (!window.empty() && nums[i] > nums[window.back()]) {
+                window.pop_back();
+            }
+            window.push_back(i);
+        }
+        res.push_back(nums[window.front()]);
+        for (int i = k; i < nums.size(); ++i) {
+            if (!window.empty() && window.front() <= i - k) {
+                window.pop_front();
+            }
+            while(!window.empty()&&nums[i]>nums[window.back()]){
+                window.pop_back();
+            }
+            window.push_back(i);
+            res.push_back(nums[window.front()]);
+        }
+        return res;
+    }
+
+    int largestRectangleArea(vector<int> &heights) {
+
+    }
+
+    int firstMissingPositive(vector<int> &nums) {
+        int n = nums.size();
+        for (int &num:nums) {
+            if (num <= 0) {
+                num = n + 1;
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            int num = abs(nums[i]);
+            if (num <= n) {
+                nums[num - 1] = -abs(nums[num - 1]);
+            }
+        }
+
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] > 0) {
+                return i + 1;
+            }
+        }
+        return n + 1;
     }
 };
 
