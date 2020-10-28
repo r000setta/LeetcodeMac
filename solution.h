@@ -1252,7 +1252,7 @@ public:
             if (!window.empty() && window.front() <= i - k) {
                 window.pop_front();
             }
-            while(!window.empty()&&nums[i]>nums[window.back()]){
+            while (!window.empty() && nums[i] > nums[window.back()]) {
                 window.pop_back();
             }
             window.push_back(i);
@@ -1285,6 +1285,18 @@ public:
             }
         }
         return n + 1;
+    }
+
+    bool uniqueOccurrences(vector<int> &arr) {
+        unordered_map<int, int> cnt;
+        for (const auto &x:arr) {
+            cnt[x]++;
+        }
+        unordered_set<int> s;
+        for (const auto& c:cnt) {
+            s.insert(c.second);
+        }
+        return s.size() == cnt.size();
     }
 };
 
