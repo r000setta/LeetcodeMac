@@ -27,5 +27,7 @@ int main() {
     vector<int> v1{-12, -9, -3, -12, -6, 15, 20, -25, -20, -15, -10};
     vector<int> v2{0, 1, 6, 4, 8, 7};
     vector<int> v3{4, 4, 9, 7, 9, 10};
-    ws.checkArithmeticSubarrays(v1, v2, v3);
+    //ws.checkArithmeticSubarrays(v1, v2, v3);
+
+    cout<<solution.strStr("aaaaa", "aaa");
 }

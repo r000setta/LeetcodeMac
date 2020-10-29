@@ -1293,11 +1293,191 @@ public:
             cnt[x]++;
         }
         unordered_set<int> s;
-        for (const auto& c:cnt) {
+        for (const auto &c:cnt) {
             s.insert(c.second);
         }
         return s.size() == cnt.size();
     }
+
+    int sumNumbers(TreeNode *root) {
+        return sumNumbersHelp(root, 0);
+    }
+
+    int sumNumbersHelp(TreeNode *root, int sum) {
+        if (root == nullptr) return 0;
+        int tmp = sum * 10 + root->val;
+        if (root->left == nullptr && root->right == nullptr) return tmp;
+        return sumNumbersHelp(root->left, tmp) + sumNumbersHelp(root->right, tmp);
+    }
+
+    void nextPermutation(vector<int> &nums) {
+        int i = 0;
+        for (i = nums.size() - 2; i >= 0; --i) {
+            if (nums[i] < nums[i + 1]) break;
+        }
+        if (i == -1) reverse(nums.begin(), nums.end());
+        else {
+            for (int j = nums.size() - 1; j >= i + 1; --j) {
+                if (nums[i] < nums[j]) {
+                    swap(nums[i], nums[j]);
+                    reverse(nums.begin() + i + 1, nums.end());
+                    break;
+                }
+            }
+        }
+    }
+
+    int search2(vector<int> &nums, int target) {
+        int n = nums.size();
+        if (n == 0) return -1;
+        if (n == 1) return nums[0] == target ? 0 : -1;
+        int l = 0, r = n - 1;
+        while (l <= r) {
+            int mid = l + ((r - l) >> 1);
+            if (nums[mid] == target) return mid;
+            if (nums[0] <= nums[mid]) {
+                if (nums[0] <= target && target < nums[mid]) {
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            } else {
+                if (nums[mid] < target && target <= nums[n - 1]) {
+                    l = mid + 1;
+                } else {
+                    r = mid - 1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    vector<int> searchRange(vector<int> &nums, int target) {
+        vector<int> res{-1, -1};
+        if (nums.size() == 0) return res;
+        if (nums.size() == 1) {
+            if (nums[0] == target) {
+                res[0] = res[1] = 0;
+            }
+            return res;
+        }
+        res[0] = left_bound(nums, target);
+        res[1] = right_bound(nums, target);
+        return res;
+    }
+
+    int binarySearch(vector<int> &nums, int target) {
+        int left = 0;
+        int right = nums.size() - 1;
+        while (left <= right) {
+            int mid = left + ((right - left) >> 1);
+            if (nums[mid] == target) return mid;
+            else if (nums[mid] < target) left = mid + 1;
+            else if (nums[mid] > target) right = mid - 1;
+        }
+        return -1;
+    }
+
+    int left_bound(vector<int> &nums, int target) {
+        if (nums.size() == 1) return -1;
+        int left = 0, right = nums.size() - 1;
+        while (left <= right) {
+            int mid = left + ((right - left) >> 1);
+            if (nums[mid] == target) {
+                right = mid - 1;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            }
+        }
+        if (left >= nums.size() || nums[left] != target) return -1;
+        return left;
+    }
+
+    int right_bound(vector<int> &nums, int target) {
+        int left = 0, right = nums.size() - 1;
+        while (left <= right) {
+            int mid = left + ((right - left) >> 1);
+            if (nums[mid] < target) {
+                left = mid + 1;
+            } else if (nums[mid] > target) {
+                right = mid - 1;
+            } else {
+                left = mid + 1;
+            }
+        }
+        if (right < 0 || nums[right] != target) {
+            return -1;
+        }
+        return right;
+    }
+
+    vector<int> buildNext(string &p) {
+        vector<int> next(p.size());
+        int i = 1, now = 0;
+        while (i < p.size()) {
+            if (p[i] == p[now]) {
+                now++;
+                next[i] = now;
+                i++;
+            } else if (now != 0) {
+                now = next[now - 1];
+            } else {
+                i++;
+                next[i] = now;
+            }
+        }
+        return next;
+    }
+
+    int strStr(string haystack, string needle) {
+        vector<int> next = buildNext(needle);
+        int tar = 0, pos = 0;
+        while (tar < haystack.size()) {
+            if (haystack[tar] == needle[pos]) {
+                tar++;
+                pos++;
+            } else if (pos != 0) {
+                pos = next[pos - 1];
+            } else {
+                tar++;
+            }
+            if (pos == needle.size()) {
+                return tar - pos;
+            }
+        }
+        return -1;
+    }
+
+    vector<vector<int>> permute(vector<int> &nums) {
+        vector<vector<int>> res;
+        if (nums.size() == 0) return res;
+        vector<bool> vis(nums.size());
+        vector<int> path;
+        permuteBP(nums, res, path, vis);
+        return res;
+    }
+
+    void permuteBP(vector<int> &nums, vector<vector<int>> &res,
+                   vector<int> &path, vector<bool> &vis) {
+        if (path.size() == nums.size()) {
+            res.emplace_back(path);
+            return;
+        } else {
+            for (int i = 0; i < nums.size(); ++i) {
+                if (!vis[i]) {
+                    vis[i] = true;
+                    path.emplace_back(nums[i]);
+                    permuteBP(nums, res, path, vis);
+                    path.pop_back();
+                    vis[i] = false;
+                }
+            }
+        }
+    }
+
+
 };
 
 #endif //LEETCODEMAC_SOLUTION_H

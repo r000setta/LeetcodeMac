@@ -270,6 +270,23 @@ public:
         ListNode *r = mergeKListsHelp(lists, mid + 1, right);
         return mergeTwoLists(l, r);
     }
+
+    int removeDuplicates(vector<int> &nums) {
+        if (nums.size() == 0) return 0;
+        int i = 0;
+        for (int j = 1; j < nums.size(); j++) {
+            if (nums[i] != nums[j]) {
+                i++;
+                nums[i] = nums[j];
+            }
+        }
+        return i + 1;
+    }
+
+    int strStr(string haystack, string needle) {
+        if (needle == "") return 0;
+
+    }
 };
 
 #endif //LEETCODEMAC_TOP_H

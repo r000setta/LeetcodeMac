@@ -96,6 +96,7 @@ public:
         }
         return false;
     }
+
 };
 
 #endif //LEETCODEMAC_WEEKLY_H
