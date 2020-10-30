@@ -1477,7 +1477,177 @@ public:
         }
     }
 
+    vector<vector<int>> combinationSum(vector<int> &candidates, int target) {
+        vector<vector<int>> res;
+        vector<int> path;
+        combinationSumBP(candidates, target, res, path, 0);
+        return res;
+    }
 
+    void combinationSumBP(vector<int> &candidates, int target,
+                          vector<vector<int>> &res, vector<int> &path,
+                          int begin) {
+        if (target == 0) {
+            res.emplace_back(path);
+            return;
+        } else {
+            for (int i = begin; i < candidates.size(); ++i) {
+                if (target < candidates[i]) {
+                    continue;
+                } else {
+                    path.emplace_back(candidates[i]);
+                    combinationSumBP(candidates, target - candidates[i], res, path, i);
+                    path.pop_back();
+                }
+            }
+        }
+    }
+
+    int islandPerimeter(vector<vector<int>> &grid) {
+        for (int i = 0; i < grid.size(); ++i) {
+            for (int j = 0; j < grid[0].size(); ++j) {
+                if (grid[i][j] == 1) {
+                    return islandPerimeterHelp(grid, i, j);
+                }
+            }
+        }
+        return 0;
+    }
+
+    int islandPerimeterHelp(vector<vector<int>> &grid, int x, int y) {
+        if (x < 0 || x >= grid.size() || y < 0 || y >= grid[0].size()) return 1;
+        if (grid[x][y] == 0) return 1;
+        if (grid[x][y] == 2) return 0;
+        grid[x][y] = 2;
+        return islandPerimeterHelp(grid, x - 1, y) + islandPerimeterHelp(grid, x + 1, y)
+               + islandPerimeterHelp(grid, x, y - 1) + islandPerimeterHelp(grid, x, y + 1);
+    }
+
+    vector<vector<int>> combinationSum2(vector<int> &candidates, int target) {
+        vector<vector<int>> ans;
+        vector<int> path;
+        sort(candidates.begin(), candidates.end());
+        combinationSum2(candidates, target, ans, path, 0);
+        return ans;
+    }
+
+    void combinationSum2(vector<int> &candidates, int target,
+                         vector<vector<int>> &ans, vector<int> &path, int start) {
+        if (target == 0) {
+            ans.emplace_back(path);
+            return;
+        } else {
+            for (int i = start; i < candidates.size() && target - candidates[i] >= 0; ++i) {
+                if (i > start && candidates[i] == candidates[i - 1]) {
+                    continue;
+                }
+                path.emplace_back(candidates[i]);
+                combinationSum2(candidates, target - candidates[i], ans, path, i + 1);
+                path.pop_back();
+            }
+        }
+    }
+
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int>> ans;
+        vector<int> path;
+        combineBP(n, k, ans, path, 1);
+        return ans;
+    }
+
+    void combineBP(int n, int k, vector<vector<int>> &ans,
+                   vector<int> &path, int begin) {
+        if (path.size() == k) {
+            ans.emplace_back(path);
+            return;
+        } else {
+            for (int i = begin; i <= n; ++i) {
+                path.emplace_back(i);
+                combineBP(n, k, ans, path, i + 1);
+                path.pop_back();
+            }
+        }
+    }
+
+    vector<vector<int>> subsets(vector<int> &nums) {
+        vector<vector<int>> res;
+        vector<int> path;
+        subsetsHelp(nums, res, path, 0);
+        return res;
+    }
+
+    void subsetsHelp(vector<int> &nums, vector<vector<int>> &res, vector<int> &path,
+                     int start) {
+        res.emplace_back(path);
+        for (int i = start; i < nums.size(); ++i) {
+            path.emplace_back(nums[i]);
+            subsetsHelp(nums, res, path, i + 1);
+            path.pop_back();
+        }
+    }
+
+    vector<vector<int>> floodFill(vector<vector<int>> &image, int sr, int sc, int newColor) {
+        if (newColor == image[sr][sc]) return image;
+        floodFillDFS(image, sr, sc, newColor, image[sr][sc]);
+        return image;
+    }
+
+    void floodFillDFS(vector<vector<int>> &image, int x, int y, int c, int o) {
+        if (x < 0 || x >= image.size() || y < 0 || y >= image[0].size()) return;
+        if (image[x][y] == o) {
+            image[x][y] = c;
+            floodFillDFS(image, x + 1, y, c, o);
+            floodFillDFS(image, x - 1, y, c, o);
+            floodFillDFS(image, x, y + 1, c, o);
+            floodFillDFS(image, x, y - 1, c, o);
+        }
+    }
+
+    int numIslands(vector<vector<char>> &grid) {
+        int cnt = 0;
+        for (int i = 0; i < grid.size(); ++i) {
+            for (int j = 0; j < grid[0].size(); ++j) {
+                if (grid[i][j] == '1') {
+                    numIslandsDFS(grid, i, j);
+                    cnt++;
+                }
+            }
+        }
+        return cnt;
+    }
+
+    void numIslandsDFS(vector<vector<char>> &grid, int x, int y) {
+        if (x < 0 || x >= grid.size() || y < 0 || y >= grid[0].size()) return;
+        if (grid[x][y] == 0) {
+            return;
+        } else if (grid[x][y] == '2') {
+            return;
+        } else if (grid[x][y] == '1') {
+            grid[x][y] = '2';
+            numIslandsDFS(grid, x + 1, y);
+            numIslandsDFS(grid, x - 1, y);
+            numIslandsDFS(grid, x, y + 1);
+            numIslandsDFS(grid, x, y - 1);
+        }
+    }
+
+    bool exist(vector<vector<char>> &board, string word) {
+        for (int i = 0; i < board.size(); ++i) {
+            for (int j = 0; j < board[0].size(); ++j) {
+                if (board[i][j] == word[0]) {
+                    if (existDFS(board, word, i, j, 0)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    bool existDFS(vector<vector<char>> &board, string word, int x, int y, int i) {
+        if (x < 0 || x >= board.size() || y < 0 || y >= board[0].size()) return false;
+        
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION_H

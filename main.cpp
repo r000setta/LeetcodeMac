@@ -29,5 +29,7 @@ int main() {
     vector<int> v3{4, 4, 9, 7, 9, 10};
     //ws.checkArithmeticSubarrays(v1, v2, v3);
 
-    cout<<solution.strStr("aaaaa", "aaa");
+    //cout<<solution.strStr("aaaaa", "aaa");
+    vector<int> v4{1,2,3};
+    solution.subsets(v4);
 }
