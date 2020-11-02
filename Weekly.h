@@ -97,6 +97,99 @@ public:
         return false;
     }
 
+    bool canFormArray(vector<int> &arr, vector<vector<int>> &pieces) {
+        for (int j = 0; j < pieces.size(); ++j) {
+            int len = pieces[j].size();
+            int idx = 0;
+            for (int i = 0; i < arr.size(); ++i) {
+                if (arr[i] == pieces[j][idx]) {
+                    idx++;
+                    if (idx == len) {
+                        break;
+                    }
+                }
+            }
+            if (idx != len) return false;
+        }
+        return true;
+    }
+
+    int countVowelStrings(int n) {
+        vector<vector<int>> dp(n + 1, vector<int>(5, 1));
+        for (int i = 2; i <= n; ++i) {
+            dp[i][0] = dp[i - 1][0];
+            dp[i][1] = dp[i][0] + dp[i - 1][1];
+            dp[i][2] = dp[i][1] + dp[i - 1][2];
+            dp[i][3] = dp[i][2] + dp[i - 1][3];
+            dp[i][4] = dp[i][3] + dp[i - 1][4];
+        }
+        return dp[n][0] + dp[n][1] + dp[n][2] + dp[n][3] + dp[n][4];
+    }
+
+    int furthestBuilding(vector<int> &heights, int bricks, int ladders) {
+        int n = heights.size();
+        priority_queue<int, vector<int>, greater<int>> q;
+        int sum = 0;
+        for (int i = 1; i < n; ++i) {
+            int delta = heights[i] - heights[i - 1];
+            if (delta > 0) {
+                q.push(delta);
+                if (q.size() > ladders) {
+                    sum += q.top();
+                    q.pop();
+                }
+                if (sum > bricks) {
+                    return i - 1;
+                }
+            }
+        }
+        return n - 1;
+    }
+
+    int boardDir[8][2] = {{0,  1},
+                          {1,  0},
+                          {0,  -1},
+                          {-1, 0},
+                          {1,  1},
+                          {1,  -1},
+                          {-1, 1},
+                          {-1, -1}};
+
+    vector<vector<char>> updateBoard(vector<vector<char>> &board, vector<int> &click) {
+        int x = click[0];
+        int y = click[1];
+        if (board[x][y] == 'M') {
+            board[x][y] = 'X';
+        } else {
+            updateBoardDFS(board,x,y);
+        }
+        return board;
+    }
+
+    void updateBoardDFS(vector<vector<char>> &board, int x, int y) {
+        int cnt = 0;
+        for (int i = 0; i < 8; ++i) {
+            int tx = x + boardDir[i][0];
+            int ty = y + boardDir[i][1];
+            if (tx < 0 || tx >= board.size() || ty < 0 || ty >= board[0].size()) {
+                continue;
+            }
+            cnt += board[tx][ty] == 'M';
+        }
+        if (cnt > 0) {
+            board[x][y] = cnt + '0';
+        } else {
+            board[x][y] = 'B';
+            for (int i = 0; i < 8; ++i) {
+                int tx = x + boardDir[i][0];
+                int ty = y + boardDir[i][1];
+                if (tx < 0 || tx >= board.size() || ty < 0 || ty >= board[0].size()||board[tx][ty]!='E') {
+                    continue;
+                }
+                updateBoardDFS(board, tx, ty);
+            }
+        }
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H

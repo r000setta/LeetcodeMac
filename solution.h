@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <string>
 #include <queue>
+#include <set>
 #include <unordered_set>
 
 using namespace std;
@@ -1646,7 +1647,109 @@ public:
 
     bool existDFS(vector<vector<char>> &board, string word, int x, int y, int i) {
         if (x < 0 || x >= board.size() || y < 0 || y >= board[0].size()) return false;
-        
+        return true;
+    }
+
+    vector<int> intersection(vector<int> &nums1, vector<int> &nums2) {
+        vector<int> res;
+        unordered_set<int> tmp1;
+        unordered_set<int> tmp2;
+        for (int n:nums1) {
+            tmp1.insert(n);
+        }
+        for (int n:nums2) {
+            tmp2.insert(n);
+        }
+        for (int n:tmp2) {
+            if (tmp1.find(n) != tmp1.end()) {
+                res.emplace_back(n);
+            }
+        }
+        return res;
+    }
+
+    vector<string> letters{"abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+    vector<string> letterCombinations(string digits) {
+        vector<string> res;
+        string path;
+        if (digits.size() == 0) return res;
+        letterCombinationsBP(digits, res, path, 0);
+        return res;
+    }
+
+    void letterCombinationsBP(string &digits, vector<string> &res, string &path, int idx) {
+        if (idx == digits.size()) {
+            res.emplace_back(path);
+            return;
+        }
+        int d = digits[idx] - '0';
+        string letter = letters[d - 2];
+        for (const auto &l:letter) {
+            path.push_back(l);
+            letterCombinationsBP(digits, res, path, idx + 1);
+            path.pop_back();
+        }
+    }
+
+    vector<string> letterCasePermutation(string S) {
+        vector<string> res;
+        string path;
+        return res;
+    }
+
+    void letterCasePermutationBP(string S, vector<string> &res, string &path, int idx) {
+        if (path.size() == S.size()) {
+            res.emplace_back(path);
+            return;
+        }
+        for (int i = idx; i < S.size(); ++i) {
+
+        }
+    }
+
+    int minEatingSpeed(vector<int> &piles, int H) {
+        int l = 1, r = 1e9;
+        while (l < r) {
+            int mid = l + ((r - l) >> 1);
+            if (!minEatingSpeedHelp(piles, H, mid)) {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+        return l;
+    }
+
+    bool minEatingSpeedHelp(vector<int> &piles, int H, int K) {
+        int time = 0;
+        for (int p:piles) {
+            time += (p - 1) / K + 1;
+        }
+        return time <= H;
+    }
+
+    string longestWord(vector<string> &words) {
+        unordered_set<string> all(words.begin(), words.end());
+        string ans{};
+        for (auto w:words) {
+            auto tmp = all;
+            tmp.erase(w);
+            if (longestWordHelp(w, tmp)) {
+                if (w.size() >= ans.size()) ans = w;
+                if (w.size() == ans.size()) ans = min(ans, w);
+            }
+        }
+        return ans;
+    }
+
+    bool longestWordHelp(string s, unordered_set<string> &words) {
+        if (s.size() == 0) return true;
+        for (int i = 1; i <= s.size(); ++i) {
+            if(words.count(s.substr(0,i))&&longestWordHelp(s.substr(i),words))
+                return true;
+        }
+        return false;
     }
 };
 

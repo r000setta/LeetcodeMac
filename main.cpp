@@ -30,6 +30,8 @@ int main() {
     //ws.checkArithmeticSubarrays(v1, v2, v3);
 
     //cout<<solution.strStr("aaaaa", "aaa");
-    vector<int> v4{1,2,3};
-    solution.subsets(v4);
+    vector<int> v4{1, 2, 3};
+
+    vector<string> v5{"cat", "banana", "dog", "nana", "walk", "walker", "dogwalker"};
+    solution.longestWord(v5);
 }
