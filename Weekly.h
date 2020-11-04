@@ -161,7 +161,7 @@ public:
         if (board[x][y] == 'M') {
             board[x][y] = 'X';
         } else {
-            updateBoardDFS(board,x,y);
+            updateBoardDFS(board, x, y);
         }
         return board;
     }
@@ -183,12 +183,39 @@ public:
             for (int i = 0; i < 8; ++i) {
                 int tx = x + boardDir[i][0];
                 int ty = y + boardDir[i][1];
-                if (tx < 0 || tx >= board.size() || ty < 0 || ty >= board[0].size()||board[tx][ty]!='E') {
+                if (tx < 0 || tx >= board.size() || ty < 0 || ty >= board[0].size() || board[tx][ty] != 'E') {
                     continue;
                 }
                 updateBoardDFS(board, tx, ty);
             }
         }
+    }
+
+    vector<vector<int>> insert(vector<vector<int>> &intervals, vector<int> &newInterval) {
+        int left = newInterval[0];
+        int right = newInterval[1];
+        bool flag = false;
+        vector<vector<int>> ans;
+        for (const auto &interval:intervals) {
+            if (left > interval[1]) {
+                ans.emplace_back(interval);
+            } else if (right < interval[0]) {
+                if (!flag) {
+                    vector<int> tmp{left, right};
+                    ans.emplace_back(std::move(tmp));
+                    flag = true;
+                }
+                ans.emplace_back(interval);
+            } else {
+                left = min(left, interval[0]);
+                right = max(right, interval[1]);
+            }
+        }
+        if (!flag) {
+            vector<int> tmp{left, right};
+            ans.emplace_back(std::move(tmp));
+        }
+        return ans;
     }
 };
 

@@ -7,6 +7,7 @@
 #include "solution.h"
 #include "top.h"
 #include "Weekly.h"
+#include "solution2.h"
 
 using namespace std;
 
@@ -34,4 +35,22 @@ int main() {
 
     vector<string> v5{"cat", "banana", "dog", "nana", "walk", "walker", "dogwalker"};
     solution.longestWord(v5);
+
+    vector<vector<char>> v7{{'A', 'B', 'C', 'E'},
+                            {'S', 'F', 'C', 'S'},
+                            {'A', 'D', 'E', 'E'}};
+
+    vector<vector<char>> v8{{'C', 'A', 'A'},
+                            {'A', 'A', 'A'},
+                            {'B', 'C', 'D'}};
+    Solution2 s2;
+    vector<int> v6{0, 3, 2, 1};
+
+    vector<vector<char>> v9{{'1', '0', '1', '0', '0'},
+                            {'1', '0', '1', '1', '1'},
+                            {'1', '1', '1', '1', '1'},
+                            {'1', '0', '0', '1', '0'}};
+
+    // s2.maximalRectangle(v9);
+    s2.generateMatrix(4);
 }
