@@ -162,6 +162,81 @@ public:
         }
         return res;
     }
+
+    int countPairs(TreeNode *root, int distance) {
+        int ans = 0;
+        countPairsHelp(root, distance, ans);
+        return ans;
+    }
+
+    vector<int> countPairsHelp(TreeNode *root, int dis, int &ans) {
+        if (!root) return {};
+        if (root->left == nullptr && root->right == nullptr) return {0};
+
+        vector<int> ret;
+        auto left = countPairsHelp(root->left, dis, ans);
+        for (auto &e:left) {
+            if (++e > dis) continue;
+            ret.emplace_back(e);
+        }
+        auto right = countPairsHelp(root->right, dis, ans);
+        for (auto &e:right) {
+            if (++e > dis) continue;
+            ret.emplace_back(e);
+        }
+        for (auto l:left) {
+            for (auto r:right) {
+                if (l + r <= dis) {
+                    ans++;
+                }
+            }
+        }
+        return ret;
+    }
+
+    TreeNode *constructMaximumBinaryTree(vector<int> &nums) {
+        if (nums.size() == 0) return nullptr;
+        return constructMaximumBinaryTreeHelp(nums, 0, nums.size() - 1);
+    }
+
+    TreeNode *constructMaximumBinaryTreeHelp(vector<int> &nums, int l, int r) {
+        if (l > r) return nullptr;
+        int idx = findMaxIdx(nums, l, r);
+        auto *root = new TreeNode(nums[idx]);
+        root->left = constructMaximumBinaryTreeHelp(nums, l, idx - 1);
+        root->right = constructMaximumBinaryTreeHelp(nums, idx + 1, r);
+        return root;
+    }
+
+    int findMaxIdx(vector<int> &nums, int l, int r) {
+        int res = l;
+        for (int i = l; i <= r; ++i) {
+            if (nums[res] < nums[i]) res = i;
+        }
+        return res;
+    }
+
+    TreeNode *lcaDeepestLeaves(TreeNode *root) {
+    }
+
+    TreeNode *lcaDeepestLeavesHelp(TreeNode *root, int &height) {
+        if (!root) {
+            height = -1;
+            return nullptr;
+        }
+        int leftH;
+        int rightH;
+        auto left = lcaDeepestLeavesHelp(root->left, leftH);
+        auto right = lcaDeepestLeavesHelp(root->right, rightH);
+        height = max(leftH, rightH) + 1;
+        if (leftH == rightH) return root;
+        if (leftH > rightH) return left;
+        return right;
+    }
+
+    vector<TreeNode*> delNodes(TreeNode* root, vector<int>& to_delete) {
+
+    }
 };
 
 #endif //LEETCODEMAC_TREE_H

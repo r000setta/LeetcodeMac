@@ -31,6 +31,16 @@ public:
         return pre[row2 + 1][col2 + 1] - pre[row2 + 1][col1] - pre[row1][col2 + 1] + pre[row1][col1];
     }
 
+    vector<int> sortByBits(vector<int> &arr) {
+        vector<int> bit(10001, 0);
+        for (int i = 1; i <= 10000; ++i) {
+            bit[i] = bit[i >> 1] + (i & 1);
+        }
+        sort(arr.begin(), arr.end(), [&](int x, int y) {
+            return bit[x] == bit[y] ? x < y : bit[x] < bit[y];
+        });
+        return arr;
+    }
 };
 
 #endif //LEETCODEMAC_NUMMATRIX_H
