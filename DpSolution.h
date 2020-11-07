@@ -54,6 +54,7 @@ public:
             sub[i + 1] = sub[i] + nums[i];
         }
         dp[0][0] = 0;
+        
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= min(i, m); ++j) {
                 for (int k = 0; k < i; ++k) {
