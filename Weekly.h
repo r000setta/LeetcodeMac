@@ -252,6 +252,90 @@ public:
         }
         return 0;
     }
+
+    int countRangeSum(vector<int> &nums, int lower, int upper) {
+        int m = nums.size();
+        vector<int> pre(m + 1);
+        for (int i = 0; i < m; ++i) {
+            pre[i + 1] = pre[i] + nums[i];
+        }
+        int res = 0;
+        for (int i = 0; i < m; ++i) {
+            for (int j = i; j < m; ++j) {
+                int sum = pre[j + 1] - pre[i];
+                if (sum <= upper && sum >= lower) res++;
+            }
+        }
+        return res;
+    }
+
+    int maxProfit(vector<int> &prices) {
+        if (prices.size() == 0) return 0;
+        int res = 0;
+        int mval = prices[0];
+        for (int i = 1; i < prices.size(); ++i) {
+            if (prices[i] < mval) mval = prices[i];
+            else res = max(res, prices[i] - mval);
+        }
+        return res;
+    }
+
+    int maxProfit2(vector<int> &prices) {
+        if (prices.size() == 0) return 0;
+        int res = 0;
+        for (int i = 0; i < prices.size() - 1; ++i) {
+            if (prices[i] < prices[i + 1]) res += prices[i + 1] - prices[i];
+        }
+        return res;
+    }
+
+    int maxProfit(vector<int> &prices, int fee) {
+        int m = prices.size();
+        if (m == 0) return 0;
+        vector<vector<int>> dp(m, vector<int>(2));
+        dp[0][0] = 0;
+        dp[0][1] = -prices[0];
+        for (int i = 1; i < m; ++i) {
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i] - fee);
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
+        }
+        return dp[m - 1][0];
+    }
+
+    int maxProfit3(vector<int> &prices) {
+        int m = prices.size();
+        if (m == 0) return 0;
+        vector<vector<int>> dp(m, vector<int>(3));
+        dp[0][0] = 0;
+        dp[0][1] = 0;
+        dp[0][2] = -prices[0];
+        for (int i = 1; i < m; ++i) {
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][2] + prices[i]);
+            dp[i][1] = dp[i - 1][0];
+            dp[i][2] = max(dp[i - 1][2], dp[i - 1][1] - prices[i]);
+        }
+        return dp[m - 1][0];
+    }
+
+    int maxProfit2(int k, vector<int> &prices) {
+        int m = prices.size();
+        if (m == 0) return 0;
+        vector<vector<vector<int>>> dp(m, vector<vector<int>>(3, vector<int>(2)));
+        dp[0][0][0] = 0;
+        dp[0][0][1] = -prices[0];
+        dp[0][1][0] = 0;
+        dp[0][1][1] = -prices[0];
+        dp[0][2][0] = 0;
+        dp[0][2][1] = -prices[0];
+        for (int i = 1; i < m; ++i) {
+            dp[i][0][0] = dp[i - 1][0][0];
+            dp[i][0][1] = max(dp[i - 1][0][1], dp[i - 1][0][0] - prices[i]);
+            dp[i][1][0] = max(dp[i - 1][1][0], dp[i - 1][0][1] + prices[i]);
+            dp[i][1][1] = max(dp[i - 1][1][1], dp[i - 1][1][0] - prices[i]);
+            dp[i][2][0] = max(dp[i - 1][2][0], dp[i - 1][1][1] + prices[i]);
+        }
+        return dp[m - 1][2][0];
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H

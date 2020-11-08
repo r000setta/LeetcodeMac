@@ -9,6 +9,7 @@
 #include <string>
 #include <queue>
 #include <unordered_set>
+#include "solution.h"
 
 using namespace std;
 
@@ -54,7 +55,7 @@ public:
             sub[i + 1] = sub[i] + nums[i];
         }
         dp[0][0] = 0;
-        
+
         for (int i = 1; i <= n; ++i) {
             for (int j = 1; j <= min(i, m); ++j) {
                 for (int k = 0; k < i; ++k) {
@@ -63,6 +64,53 @@ public:
             }
         }
         return (int) dp[n][m];
+    }
+
+    int rob(vector<int> &nums) {
+        if (nums.size() == 0) return 0;
+        if (nums.size() == 1) return nums[0];
+        vector<int> dp(nums.size());
+        dp[0] = nums[0];
+        dp[1] = max(nums[0], nums[1]);
+        for (int i = 2; i < nums.size(); ++i) {
+            dp[i] = max(dp[i - 2] + nums[i], dp[i - 1]);
+        }
+        return dp[nums.size() - 1];
+    }
+
+    int rob2(vector<int> &nums) {
+        int n = nums.size();
+        if (n == 0) return 0;
+        if (n == 1) return nums[0];
+        return max(rob2Help(nums, 0, n - 2), rob2Help(nums, 1, n - 1));
+    }
+
+    int rob2Help(vector<int> &nums, int l, int r) {
+        int dpi = 0;
+        int dpi_2 = 0;
+        int dpi_1 = 0;
+        for (int i = l; i <= r; ++i) {
+            dpi = max(dpi_1, nums[i] + dpi_2);
+            dpi_2 = dpi_1;
+            dpi_1 = dpi;
+        }
+        return dpi;
+    }
+
+    int rob3(TreeNode *root) {
+        unordered_map<TreeNode *, int> memo;
+        return rob3Help(root, memo);
+    }
+
+    int rob3Help(TreeNode *root, unordered_map<TreeNode *, int> &memo) {
+        if (root == nullptr) return 0;
+        if (memo.count(root)) return memo[root];
+        int mon = root->val;
+        if (root->right != nullptr) mon += rob3Help(root->right->left, memo) + rob3Help(root->right->right, memo);
+        if (root->left != nullptr) mon += rob3Help(root->left->left, memo) + rob3Help(root->left->right, memo);
+        mon = max(mon, rob3Help(root->left, memo) + rob3Help(root->right, memo));
+        memo[root] = mon;
+        return mon;
     }
 };
 
