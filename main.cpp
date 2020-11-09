@@ -52,5 +52,6 @@ int main() {
                             {'1', '0', '0', '1', '0'}};
 
     // s2.maximalRectangle(v9);
-    s2.generateMatrix(4);
+    vector<int> va{1, 1, 1, 2, 2, 3, 3, 3};
+    ws.topKFrequent(va, 2);
 }

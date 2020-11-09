@@ -336,6 +336,80 @@ public:
         }
         return dp[m - 1][2][0];
     }
+
+    int findKthLargest(vector<int> &nums, int k) {
+        int len = nums.size();
+        int left = 0;
+        int right = len - 1;
+        int tar = len - k;
+        while (true) {
+            int idx = findKthLargestPar(nums, left, right);
+            if (idx == tar) return nums[idx];
+            else if (idx < tar) left = idx + 1;
+            else right = idx - 1;
+        }
+    }
+
+    int findKthLargestPar(vector<int> &nums, int l, int r) {
+        int pivot = nums[l];
+        int j = l;
+        for (int i = l + 1; i <= r; ++i) {
+            if (nums[i] < pivot) {
+                j++;
+                swap(nums[i], nums[j]);
+            }
+        }
+        swap(nums[j], nums[l]);
+        return j;
+    }
+
+    void sortColors(vector<int> &nums) {
+        int size = nums.size();
+        if (size < 2) return;
+        int zero = 0;
+        int two = size;
+        int i = 0;
+        while (i < two) {
+            if (nums[i] == 0) {
+                swap(nums[zero], nums[i]);
+                zero++;
+                i++;
+            } else if (nums[i] == 1) {
+                i++;
+            } else {
+                two--;
+                swap(nums[i], nums[two]);
+            }
+        }
+    }
+
+    static bool topKFrequentCmp(pair<int, int> &m, pair<int, int> &n) {
+        return m.second > n.second;
+    }
+
+    vector<int> topKFrequent(vector<int> &nums, int k) {
+        unordered_map<int, int> mp;
+        for (int n:nums) {
+            mp[n]++;
+        }
+        priority_queue<pair<int, int>, vector<pair<int, int>>, decltype(&topKFrequentCmp)> q(topKFrequentCmp);
+        for (auto &m:mp) {
+            if (q.size() == k) {
+                if (q.top().second < m.second) {
+                    q.pop();
+                    q.emplace(m.first, m.second);
+                }
+            }else{
+                q.emplace(m.first,m.second);
+            }
+        }
+        vector<int> res(k);
+        for (int i = 0; i < k; ++i) {
+            res[i] = q.top().first;
+            q.pop();
+        }
+        return res;
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H

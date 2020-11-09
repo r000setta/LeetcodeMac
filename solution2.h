@@ -454,6 +454,24 @@ public:
         }
         return dp[m - 1][n - 1][0] >= 0 ? dp[m - 1][n - 1][0] % MOD : -1;
     }
+
+    string frequencySort(string s) {
+        unordered_map<char, int> ump;
+        for (auto &c:s) {
+            ++ump[c];
+        }
+        vector<string> vec(s.size() + 1);
+        for (auto &u:ump) {
+            vec[u.second].append(u.second, u.first);
+        }
+        string res;
+        for (int i = s.size(); i >= 0; i--) {
+            if (!vec[i].empty()) {
+                res.append(vec[i]);
+            }
+        }
+        return res;
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION2_H
