@@ -8,6 +8,7 @@
 #include "top.h"
 #include "Weekly.h"
 #include "solution2.h"
+#include "DpSolution.h"
 
 using namespace std;
 
@@ -54,4 +55,7 @@ int main() {
     // s2.maximalRectangle(v9);
     vector<int> va{1, 1, 1, 2, 2, 3, 3, 3};
     ws.topKFrequent(va, 2);
+
+    DPSolution dps;
+    dps.isMatch2("aa",".*");
 }

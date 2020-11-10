@@ -133,6 +133,81 @@ public:
         }
         return ans;
     }
+
+    string shortestPalindrome(string s) {
+        int n = s.size();
+        int base = 131, mod = 1e7;
+        int left = 0, right = 0, mul = 1;
+        int best = -1;
+        for (int i = 0; i < n; ++i) {
+            left = ((long long) left * base + s[i]) % mod;
+            right = (right + (long long) mul * s[i]) % mod;
+            if (left == right) best = i;
+            mul = ((long long) mul * base) % mod;
+        }
+        string add = (best == n - 1 ? "" : s.substr(best + 1, n));
+        reverse(add.begin(), add.end());
+        return add + s;
+    }
+
+    int lcs(string s1, string s2) {
+        int m1 = s1.size(), m2 = s2.size();
+        vector<vector<int>> dp(m1 + 1, vector<int>(m2 + 1));
+        for (int i = 1; i <= m1; ++i) {
+            for (int j = 1; j <= m2; ++j) {
+                if (s1[i - 1] == s2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
+                }
+            }
+        }
+        return dp[m1][m2];
+    }
+
+    bool isMatch(string s, string p) {
+        int m = p.size(), n = s.size();
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1));
+        dp[0][0] = 1;
+        for (int i = 1; i <= m; ++i) {
+            if (p[i - 1] != '*') break;
+            dp[i][0] = true;
+        }
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                if (p[i - 1] == s[j - 1] || p[i - 1] == '?') dp[i][j] = dp[i - 1][j - 1];
+                else if (p[i - 1] == '*') dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+            }
+        }
+        return dp[m][n];
+    }
+
+    bool isMatch2(string s, string p) {
+        int m = p.size(), n = s.size();
+        vector<vector<bool>> dp(m + 1, vector<bool>(n + 1));
+        dp[0][0] = true;
+        for (int i = 1; i <= m; ++i) {
+            if (p[i - 1] == '*' && dp[i - 2][0]) dp[i][0] = true;
+        }
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                if (p[i - 1] == s[j - 1] || p[i - 1] == '.')
+                    dp[i][j] = dp[i - 1][j - 1];
+                else if (p[i - 1] == '*') {
+                    if (p[i - 2] == s[j - 1] || p[i - 2] == '.') {
+                        dp[i][j] = dp[i - 1][j] || dp[i][j - 1] || dp[i - 2][j];
+                    } else if (p[i - 2] != s[j - 1]) {
+                        dp[i][j] = dp[i - 2][j];
+                    }
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    int minDistance(string word1, string word2) {
+
+    }
 };
 
 #endif //LEETCODEMAC_DPSOLUTION_H

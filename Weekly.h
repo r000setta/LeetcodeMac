@@ -399,8 +399,8 @@ public:
                     q.pop();
                     q.emplace(m.first, m.second);
                 }
-            }else{
-                q.emplace(m.first,m.second);
+            } else {
+                q.emplace(m.first, m.second);
             }
         }
         vector<int> res(k);
@@ -409,6 +409,28 @@ public:
             q.pop();
         }
         return res;
+    }
+
+    void nextPermutation(vector<int> &nums) {
+        if (nums.size() == 0 || nums.size() == 1) return;
+        int i = 0;
+        int m = nums.size();
+        for (i = m - 2; i >= 0; i--) {
+            if (nums[i] < nums[i + 1]) {
+                break;
+            }
+        }
+        if (i == -1) {
+            reverse(nums.begin(), nums.end());
+        } else {
+            for (int j = m - 1; j >= i + 1; j--) {
+                if (nums[i] < nums[j]) {
+                    swap(nums[i], nums[j]);
+                    reverse(nums.begin() + i + 1, nums.end());
+                    break;
+                }
+            }
+        }
     }
 };
 
