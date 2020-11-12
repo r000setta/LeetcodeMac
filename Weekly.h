@@ -432,6 +432,24 @@ public:
             }
         }
     }
+
+    vector<int> sortArrayByParityII(vector<int> &A) {
+        stack<int> s1;
+        stack<int> s2;
+        for (int i = 0; i < A.size(); ++i) {
+            if (i % 2 == 0 && A[i] % 2 != 0) {
+                s1.push(i);
+            } else if (i % 2 == 1 && A[i] % 2 != 1) {
+                s2.push(i);
+            }
+        }
+        while (!s1.empty() && !s2.empty()) {
+            swap(A[s1.top()], A[s2.top()]);
+            s1.pop();
+            s2.pop();
+        }
+        return A;
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H

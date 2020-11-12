@@ -54,8 +54,9 @@ int main() {
 
     // s2.maximalRectangle(v9);
     vector<int> va{1, 1, 1, 2, 2, 3, 3, 3};
-    ws.topKFrequent(va, 2);
+//    ws.topKFrequent(va, 2);
 
+    vector<int> vv{2, 4, 7, 1};
     DPSolution dps;
-    dps.isMatch2("aa",".*");
+    dps.lastStoneWeight(vv);
 }

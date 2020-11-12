@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <string>
 #include <queue>
+#include <numeric>
 #include <unordered_set>
 #include "solution.h"
 
@@ -219,7 +220,7 @@ public:
                 dp[i] = max(i, max(dp[i], j * dp[i - j]));
             }
         }
-        return dp[n]%1000000007 == 1000000008 ? -1 : dp[n]%1000000007;
+        return dp[n] % 1000000007 == 1000000008 ? -1 : dp[n] % 1000000007;
     }
 
     int minDistance(string word1, string word2) {
@@ -233,7 +234,7 @@ public:
         }
         for (int i = 1; i <= m; ++i) {
             for (int j = 1; j <= n; ++j) {
-                if (i)
+
             }
         }
     }
@@ -251,6 +252,90 @@ public:
             }
         }
         return dp[m][n];
+    }
+
+    bool isContinue(char prev, char curr) {
+        if (prev == 'z') return curr == 'a';
+        return prev + 1 == curr;
+    }
+
+    int findSubstringInWraproundString(string p) {
+        vector<int> dp(26, 0);
+        int n = p.size();
+        int k = 0;
+        for (int i = 0; i < n; ++i) {
+            if (i > 0 && isContinue(p[i - 1], p[i])) {
+                ++k;
+            } else {
+                k = 1;
+            }
+            dp[p[i] - 'a'] = max(dp[p[i] - 'a'], k);
+        }
+        return accumulate(dp.begin(), dp.end(), 0);
+    }
+
+    int countNumbersWithUniqueDigits(int n) {
+        if (n == 0) return 0;
+        if (n == 1) return 9;
+        vector<int> dp(n + 1);
+        dp[0] = 1;
+        dp[1] = 9;
+        for (int i = 2; i <= n; ++i) {
+            int k = 9, tar = 9;
+            for (int j = i - 1; j > 0; --j) {
+                tar *= k;
+                --k;
+            }
+            dp[i] = tar;
+        }
+        return accumulate(dp.begin(), dp.end(), 0);
+    }
+
+    int findTargetSumWays(vector<int> &nums, int S) {
+        vector<vector<int>> dp(nums.size(), vector<int>(2001));
+        dp[0][nums[0] + 1000] = 1;
+        dp[0][-nums[0] + 1000] = 1;
+    }
+
+    int lastStoneWeightII(vector<int> &stones) {
+
+    }
+
+    int lastStoneWeight(vector<int> &stones) {
+        priority_queue<int> p(stones.begin(), stones.end());
+        while (!p.empty() && p.size() >= 2) {
+            int a = p.top();
+            p.pop();
+            int b = p.top();
+            p.pop();
+            if (a != b) {
+                p.emplace(a - b);
+            }
+        }
+        return p.empty() ? 0 : p.top();
+    }
+
+    int coinChange(vector<int> &coins, int amount) {
+        if (amount == 0) return 0;
+        if (coins.empty()) return -1;
+        vector<int> dp(amount + 1, amount + 1);
+        dp[0] = 0;
+        for (int i = 1; i <= amount; ++i) {
+            for (int coin:coins) {
+                if (i >= coin) {
+                    dp[i] = min(dp[i], dp[i - coin] + 1);
+                }
+            }
+        }
+        return dp[amount] == amount + 1 ? -1 : dp[amount];
+    }
+
+    bool canPartition(vector<int> &nums) {
+        int sum = accumulate(nums.begin(), nums.end(), 0);
+        if (sum % 2) return false;
+        sum /= 2;
+        int m=nums.size();
+
     }
 };
 
