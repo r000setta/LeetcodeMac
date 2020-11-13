@@ -334,8 +334,44 @@ public:
         int sum = accumulate(nums.begin(), nums.end(), 0);
         if (sum % 2) return false;
         sum /= 2;
-        int m=nums.size();
+        int m = nums.size();
+        vector<vector<bool>> dp(m + 1, vector<bool>(sum + 1));
+        for (int i = 0; i <= m; ++i) {
+            dp[i][0] = true;
+        }
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= sum; ++j) {
+                if (j < nums[i - 1]) {
+                    dp[i][j] = dp[i - 1][j];
+                } else {
+                    dp[i][j] = dp[i - 1][j] || dp[i - 1][j - nums[i - 1]];
+                }
+            }
+        }
+        return dp[m][sum];
+    }
 
+    int findMaxForm(vector<string> &strs, int m, int n) {
+        int len = strs.size();
+        vector<vector<vector<int>>> dp(len + 1, vector<vector<int>>(m + 1, vector<int>(n + 1)));
+        for (int i = 1; i <= len; ++i) {
+            string s = strs[i];
+            int c0 = 0, c1 = 0;
+            for (char c:s) {
+                if (c == '0') c0++;
+                else c1++;
+            }
+            for (int j = 0; j <= m; ++j) {
+                for (int k = 0; k <= n; ++k) {
+                    if (c0 > j || c1 > k) {
+                        dp[i][j][k] = dp[i - 1][j][k];
+                    } else {
+                        dp[i][j][k] = max(dp[i - 1][j][k], dp[i - 1][j - c0][k - c1] + 1);
+                    }
+                }
+            }
+        }
+        return dp[len][m][n];
     }
 };
 
