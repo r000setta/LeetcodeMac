@@ -460,10 +460,11 @@ public:
             even->next = odd->next;
             even = even->next;
         }
-        odd->next=evenHead;
+        odd->next = evenHead;
         return head;
     }
-    vector<int> relativeSortArray(vector<int>& arr1, vector<int>& arr2) {
+
+    vector<int> relativeSortArray(vector<int> &arr1, vector<int> &arr2) {
         int upper = *max_element(arr1.begin(), arr1.end());
         vector<int> frequency(upper + 1);
         for (int x: arr1) {
@@ -482,6 +483,30 @@ public:
             }
         }
         return ans;
+    }
+
+    string removeKdigits(string num, int k) {
+        vector<char> stk;
+        for (auto &d:num) {
+            while (stk.size() > 0 && stk.back() > d && k) {
+                stk.pop_back();
+                k--;
+            }
+            stk.push_back(d);
+        }
+        for (; k > 0; --k) {
+            stk.pop_back();
+        }
+        string ans = "";
+        bool flag = true;
+        for (auto &digit:stk) {
+            if (flag && digit == '0') {
+                continue;
+            }
+            flag = false;
+            ans += digit;
+        }
+        return ans == "" ? "0" : ans;
     }
 };
 

@@ -13,7 +13,8 @@
 using namespace std;
 
 int main() {
-    vector<int> vv{2, 4, 7, 1};
-    DPSolution dps;
-    dps.canPartition(vv);
+//    DPSolution dps;
+
+    WeekSolution ws;
+    ws.removeKdigits("3002",1);
 }
