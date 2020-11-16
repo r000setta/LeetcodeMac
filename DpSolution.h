@@ -229,14 +229,19 @@ public:
         for (int i = 0; i <= m; ++i) {
             dp[i][0] = i;
         }
-        for (int i = 0; i < n; ++i) {
+        for (int i = 0; i <= n; ++i) {
             dp[0][i] = i;
         }
         for (int i = 1; i <= m; ++i) {
             for (int j = 1; j <= n; ++j) {
-
+                if (word1[i - 1] == word2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = min(dp[i - 1][j - 1], min(dp[i][j - 1], dp[i - 1][j])) + 1;
+                }
             }
         }
+        return dp[m][n];
     }
 
     int maxDotProduct(vector<int> &nums1, vector<int> &nums2) {
@@ -372,6 +377,45 @@ public:
             }
         }
         return dp[len][m][n];
+    }
+
+    int minDistance2(string word1, string word2) {
+        int m = word1.length(), n = word2.length();
+        vector<vector<int>> dp(m + 1, vector<int>(n + 1));
+        for (int i = 0; i <= m; ++i) {
+            dp[i][0] = i;
+        }
+        for (int i = 0; i <= n; ++i) {
+            dp[0][i] = i;
+        }
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                if (word1[i - 1] == word2[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = min(dp[i - 1][j], dp[i][j - 1]) + 1;
+                }
+            }
+        }
+        return dp[m][n];
+    }
+
+    int maxCoins(vector<int> &nums) {
+        int m = nums.size();
+        vector<int> p(m + 2);
+        p[0] = p[m + 1] = 1;
+        for (int i = 1; i <= m; ++i) {
+            p[i] = nums[i - 1];
+        }
+        vector<vector<int>> dp(m + 2, vector<int>(m + 2));
+        for (int i = m; i >= 0; --i) {
+            for (int j = i + 1; j < m + 2; ++j) {
+                for (int k = i + 1; k < j; ++k) {
+                    dp[i][j] = max(dp[i][j], dp[i][k] + dp[k][j] + p[i] * p[j] * p[k]);
+                }
+            }
+        }
+        return dp[0][m + 1];
     }
 };
 

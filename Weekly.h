@@ -508,6 +508,17 @@ public:
         }
         return ans == "" ? "0" : ans;
     }
+
+    vector<vector<int>> reconstructQueue(vector<vector<int>> &people) {
+        sort(people.begin(), people.end(), [](const auto &p1, const auto &p2) {
+            return p1[0] == p2[0] ? p1[1] < p2[1] : p1[0] > p2[0];
+        });
+        vector<vector<int>> ans;
+        for (auto &p:people) {
+            ans.insert(ans.begin() + p[1], p);
+        }
+        return ans;
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H
