@@ -519,6 +519,37 @@ public:
         }
         return ans;
     }
+
+    int allCellsDistOrderDir[4][2] = {{0,  1},
+                                      {0,  -1},
+                                      {1,  0},
+                                      {-1, 0}};
+
+    vector<vector<int>> allCellsDistOrder(int R, int C, int r0, int c0) {
+        vector<vector<int>> res;
+        vector<vector<bool>> vis(R, vector<bool>(C));
+        queue<pair<int, int>> q;
+        q.push({r0, c0});
+        while (!q.empty()) {
+            auto p = q.front();
+            q.pop();
+            int x = p.first, y = p.second;
+            if (vis[x][y]) continue;
+            vis[x][y] = true;
+            vector<int> a{x,y};
+            res.emplace_back(a);
+            for (const auto &dir:allCellsDistOrderDir) {
+                int tx = x + dir[0];
+                int ty = y + dir[1];
+                if (tx < 0 || tx >= R || ty < 0 || ty >= C || vis[tx][ty]) {
+                    continue;
+                } else {
+                    q.push({tx, ty});
+                }
+            }
+        }
+        return res;
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H

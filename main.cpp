@@ -16,5 +16,6 @@ int main() {
 //    DPSolution dps;
 
     WeekSolution ws;
-    ws.removeKdigits("3002",1);
+    //ws.removeKdigits("3002",1);
+    ws.allCellsDistOrder(1, 2, 0, 0);
 }
