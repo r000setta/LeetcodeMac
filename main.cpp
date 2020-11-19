@@ -13,9 +13,10 @@
 using namespace std;
 
 int main() {
-//    DPSolution dps;
+    DPSolution dps;
 
     WeekSolution ws;
     //ws.removeKdigits("3002",1);
-    ws.allCellsDistOrder(1, 2, 0, 0);
+    vector<int> v1{1, 1};
+    dps.findShortestSubArray(v1);
 }

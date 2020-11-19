@@ -502,7 +502,40 @@ public:
         }
         ListNode *newNode = slow->next;
         slow->next = nullptr;
-        
+    }
+
+    int trap(vector<int> &height) {
+        int res = 0;
+        int n = height.size();
+        vector<int> lmax(n), rmax(n);
+        lmax[0] = height[0];
+        rmax[n - 1] = height[n - 1];
+        for (int i = 1; i < n; ++i) {
+            lmax[i] = max(lmax[i - 1], height[i]);
+        }
+        for (int i = n - 2; i >= 0; --i) {
+            rmax[i] = max(rmax[i + 1], height[i]);
+        }
+        for (int i = 1; i < n - 1; ++i) {
+            res += min(lmax[i], rmax[i]) - height[i];
+        }
+        return res;
+    }
+
+    vector<int> corpFlightBookings(vector<vector<int>> &bookings, int n) {
+        vector<int> res(n);
+        vector<int> diff(n);
+        for (const auto &b:bookings) {
+            diff[b[0] - 1] += b[2];
+            if (b[1] < n) {
+                diff[b[1]] -= b[2];
+            }
+        }
+        res[0] = diff[0];
+        for (int i = 1; i < n; ++i) {
+            res[i]=res[i-1]+diff[i];
+        }
+        return res;
     }
 };
 

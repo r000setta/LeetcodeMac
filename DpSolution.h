@@ -435,6 +435,64 @@ public:
         }
         return dp[0][m - 1];
     }
+
+    int minInsertions(string s) {
+        int n = s.length();
+        vector<vector<int>> dp(n, vector<int>(n, 0));
+        for (int i = n - 2; i >= 0; --i) {
+            for (int j = i + 1; j < n; ++j) {
+                if (s[i] == s[j]) {
+                    dp[i][j] = dp[i + 1][j - 1];
+                } else {
+                    dp[i][j] = min(dp[i + 1][j], dp[i][j - 1]) + 1;
+                }
+            }
+        }
+        return dp[0][n - 1];
+    }
+
+    int maxTurbulenceSize(vector<int> &A) {
+        int n = A.size();
+        if (!n) return 0;
+        int res = 1;
+        vector<vector<int>> dp(n, vector<int>(2, 1));
+        for (int i = 1; i < n; ++i) {
+            if (A[i] < A[i - 1]) {
+                dp[i][0] = dp[i - 1][1] + 1;
+            } else if (A[i] > A[i - 1]) {
+                dp[i][1] = dp[i - 1][0] + 1;
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            res = max(res, max(dp[i][0], dp[i][1]));
+        }
+        return res;
+    }
+
+    int findShortestSubArray(vector<int> &nums) {
+        if (nums.size() == 1) return 1;
+        vector<int> left(50000, -1);
+        vector<int> right(50000, -1);
+        vector<int> cnt(50000, 0);
+        for (int i = 0; i < nums.size(); ++i) {
+            if (left[nums[i]] == -1) {
+                left[nums[i]] = i;
+            }
+            right[nums[i]] = i;
+            cnt[nums[i]]++;
+        }
+        int res = INT_MAX;
+        int mmax = -1;
+        for (const auto &c:cnt) {
+            mmax = max(mmax, c);
+        }
+        for (int i = 0; i < cnt.size(); ++i ) {
+            if (cnt[i] == mmax) {
+                res = min(res, right[i] - left[i] + 1);
+            }
+        }
+        return res;
+    }
 };
 
 #endif //LEETCODEMAC_DPSOLUTION_H
