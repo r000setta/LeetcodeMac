@@ -672,6 +672,64 @@ public:
         }
         return n - mmax;
     }
+
+    ListNode *insertionSortList(ListNode *head) {
+        if (head == nullptr) {
+            return head;
+        }
+        ListNode *dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode *last = head;
+        ListNode *curr = head->next;
+        while (curr != nullptr) {
+            if (last->val <= curr->val) {
+                last = last->next;
+            } else {
+                ListNode *prev = dummy;
+                while (prev->next->val <= curr->val) {
+                    prev = prev->next;
+                }
+                last->next = curr->next;
+                curr->next = prev->next;
+                prev->next = curr;
+            }
+            curr = last->next;
+        }
+        return dummy->next;
+    }
+
+    ListNode *sortList(ListNode *head) {
+        if (head == nullptr || head->next == nullptr) return head;
+        ListNode *fast = head->next, *slow = head;
+        while (fast->next != nullptr && fast->next->next != nullptr) {
+            fast = fast->next->next;
+            slow = slow->next;
+        }
+        ListNode *tmp = slow->next;
+        slow->next = nullptr;
+        ListNode *left = sortList(head);
+        ListNode *right = sortList(tmp);
+        ListNode *res = mergeList(left, right);
+        return res;
+    }
+
+    ListNode *mergeList(ListNode *a, ListNode *b) {
+        ListNode *dummy = new ListNode(0);
+        ListNode *tmp = dummy;
+        ListNode *ta = a, *tb = b;
+        while (ta != nullptr && tb != nullptr) {
+            if (ta->val < tb->val) {
+                tmp->next = ta;
+                ta = ta->next;
+            } else {
+                tmp->next = tb;
+                tb = tb->next;
+            }
+            tmp = tmp->next;
+        }
+        tmp->next = ta == nullptr ? tb : ta;
+        return dummy->next;
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H
