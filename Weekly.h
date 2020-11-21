@@ -730,6 +730,63 @@ public:
         tmp->next = ta == nullptr ? tb : ta;
         return dummy->next;
     }
+
+    int getMaximumGenerated(int n) {
+        if (n == 1) return 1;
+        int res = 1;
+        vector<int> vec(n + 1);
+        vec[0] = 0, vec[1] = 1;
+        for (int i = 1; i <= n / 2; ++i) {
+            vec[i * 2] = vec[i];
+            if (i != n / 2) {
+                vec[i * 2 + 1] = vec[i] + vec[i + 1];
+                res = max(res, max(vec[i * 2], vec[i * 2 + 1]));
+            } else {
+                if (n % 2 == 0) {
+                    res = max(res, vec[i * 2]);
+                } else {
+                    vec[i * 2 + 1] = vec[i] + vec[i + 1];
+                    res = max(res, max(vec[i * 2], vec[i * 2 + 1]));
+                }
+            }
+        }
+        return res;
+    }
+
+    int minDeletions(string s) {
+        vector<int> vec(26);
+        for (const auto &c:s) {
+            vec[c - 'a']++;
+        }
+        sort(vec.begin(), vec.end(), greater<int>());
+        int ret = 0;
+        int prev = vec[0];
+        for (int i = 1; i < 26 && vec[i] > 0; ++i) {
+            if (prev <= vec[i]) {
+                prev = max(prev - 1, 0);
+                ret += (vec[i] - prev);
+            } else {
+                prev = vec[i];
+            }
+        }
+        return ret;
+    }
+
+    int maxProfit2(vector<int> &nums, int orders) {
+        sort(nums.begin(), nums.end(), greater<int>());
+        long res = 0, mod = 1e9 + 7;
+        long j = 0;
+        while (orders > 0) {
+            while (j < nums.size() && nums[j] >= nums[0]) {
+                ++j;
+            }
+            int next = 0;
+            if (j < nums.size()) {
+                next=nums[j];
+            }
+            long
+        }
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H
