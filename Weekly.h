@@ -782,10 +782,26 @@ public:
             }
             int next = 0;
             if (j < nums.size()) {
-                next=nums[j];
+                next = nums[j];
             }
             long
         }
+    }
+
+    bool isAnagram(string s, string t) {
+        if (s.size() != t.size()) return false;
+        vector<int> sv(26);
+        vector<int> tv(26);
+        for (int i = 0; i < s.size(); ++i) {
+            sv[s[i] - 'a']++;
+            tv[t[i] - 'a']++;
+        }
+        for (int i = 0; i < 26; ++i) {
+            if (sv[i] != tv[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 };
 
