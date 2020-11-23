@@ -13,10 +13,14 @@
 using namespace std;
 
 int main() {
-    DPSolution dps;
+//    DPSolution dps;
 
     WeekSolution ws;
     //ws.removeKdigits("3002",1);
     vector<int> v1{1, 1};
-    dps.findShortestSubArray(v1);
+    vector<vector<int>> v2{{10, 16},
+                           {2,  8},
+                           {1,  6},
+                           {7,  12}};
+    cout << ws.findMinArrowShots(v2);
 }

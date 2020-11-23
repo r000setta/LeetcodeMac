@@ -773,19 +773,7 @@ public:
     }
 
     int maxProfit2(vector<int> &nums, int orders) {
-        sort(nums.begin(), nums.end(), greater<int>());
-        long res = 0, mod = 1e9 + 7;
-        long j = 0;
-        while (orders > 0) {
-            while (j < nums.size() && nums[j] >= nums[0]) {
-                ++j;
-            }
-            int next = 0;
-            if (j < nums.size()) {
-                next = nums[j];
-            }
-            long
-        }
+
     }
 
     bool isAnagram(string s, string t) {
@@ -802,6 +790,24 @@ public:
             }
         }
         return true;
+    }
+
+    int findMinArrowShots(vector<vector<int>> &points) {
+        if (points.empty()) {
+            return 0;
+        }
+        sort(points.begin(), points.end(), [](const auto &p1, const auto &p2) {
+            return p1[1] < p2[1];
+        });
+        int pos = points[0][1];
+        int ans = 1;
+        for (const auto &p:points) {
+            if (p[0] > pos) {
+                pos = p[1];
+                ++ans;
+            }
+        }
+        return ans;
     }
 };
 
