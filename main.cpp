@@ -9,6 +9,7 @@
 #include "Weekly.h"
 #include "solution2.h"
 #include "DpSolution.h"
+#include "Week2.h"
 
 using namespace std;
 
@@ -22,5 +23,6 @@ int main() {
                            {2,  8},
                            {1,  6},
                            {7,  12}};
-    cout << ws.findMinArrowShots(v2);
+    ws.checkPalindromeFormation("xbdef", "xecab");
+
 }

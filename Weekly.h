@@ -809,6 +809,51 @@ public:
         }
         return ans;
     }
+
+    int countNodes(TreeNode *root) {
+        if (root == nullptr) return 0;
+        return 1 + countNodes(root->right) + countNodes(root->left);
+    }
+
+    int maxDepth(string s) {
+        stack<int> stk;
+        int cur = 0;
+        int res = 0;
+        for (char c:s) {
+            if (c != '(' && c != ')') continue;
+            if (c == '(') {
+                cur++;
+            } else {
+                res = max(cur, res);
+                cur--;
+            }
+        }
+        return res;
+    }
+
+    bool checkPalindromeFormation(string a, string b) {
+        if(checkPalindromeFormationHelp(a,b)||checkPalindromeFormationHelp(b,a)) return true;
+        reverse(a.begin(),a.end());
+        reverse(b.begin(),b.end());
+        if(checkPalindromeFormationHelp(a,b)||checkPalindromeFormationHelp(b,a)) return true;
+        return false;
+    }
+
+    bool checkPalindromeFormationHelp(string a, string b) {
+        int n = a.size();
+        bool flag = true;
+        for (int i = 0; i < n / 2; ++i) {
+            if (flag) {
+                if (a[i] != b[n - 1 - i])
+                    flag = false;
+            }
+            if (!flag) {
+                if (a[i] != a[n - 1 - i])
+                    return false;
+            }
+        }
+        return true;
+    }
 };
 
 #endif //LEETCODEMAC_WEEKLY_H
