@@ -14,15 +14,8 @@
 using namespace std;
 
 int main() {
-//    DPSolution dps;
-
-    WeekSolution ws;
-    //ws.removeKdigits("3002",1);
-    vector<int> v1{1, 1};
-    vector<vector<int>> v2{{10, 16},
-                           {2,  8},
-                           {1,  6},
-                           {7,  12}};
-    ws.checkPalindromeFormation("xbdef", "xecab");
+    WeekSolution2 ws;
+    vector<int> v1{2, 3, 4, 7, 11};
+    ws.findKthPositive(v1, 5);
 
 }
