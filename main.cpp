@@ -15,7 +15,6 @@ using namespace std;
 
 int main() {
     WeekSolution2 ws;
-    vector<int> v1{2, 3, 4, 7, 11};
-    ws.findKthPositive(v1, 5);
-
+    vector<int> v1{1, 2, 3, 4};
+    ws.rangeSum(v1, 4, 1, 5);
 }
