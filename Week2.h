@@ -539,38 +539,86 @@ public:
     }
 
     bool hasAllCodes(string s, int k) {
-        auto tar = hasAllCodesHelp(k);
         if (s.size() < k) return false;
-        for (auto &t:tar) {
-            if (s.find(t) == s.npos) {
-                return false;
-            }
+        unordered_set<string> st;
+        for (int i = 0; i <= s.size() - k; ++i) {
+            st.insert(s.substr(i, k));
         }
-       return true;
+        return st.size() == (1 << k);
     }
 
-    vector<string> hasAllCodesHelp(int k) {
-        vector<string> res;
-        string path = "";
-        hasAllCodesBP(res, path, k);
+    vector<bool> checkIfPrerequisite(int n, vector<vector<int>> &prerequisites, vector<vector<int>> &queries) {
+        vector<vector<bool>> d(n, vector<bool>(n));
+        for (auto &r:prerequisites) d[r[0]][r[1]] = true;
+        for (int k = 0; k < n; ++k) {
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < n; ++j) {
+                    d[i][j] = d[i][j] || (d[i][k] && d[k][j]);
+                }
+            }
+        }
+        vector<bool> res;
+        for (auto &q:queries) {
+            res.emplace_back(d[q[0]][q[1]]);
+        }
         return res;
     }
 
-    void hasAllCodesBP(vector<string> &res, string &path, int k) {
-        if (path.size() == k) {
-            res.emplace_back(path);
-            return;
+    bool isPossible(vector<int> &nums) {
+        unordered_map<int, int> nc, tail;
+        for (auto num:nums) nc[num]++;
+        for (auto num:nums) {
+            if (nc[num] == 0) continue;
+            else if (nc[num] > 0 && tail[num - 1] > 0) {
+                nc[num]--;
+                tail[num - 1]--;
+                tail[num]++;
+            } else if (nc[num] > 0 && nc[num + 1] > 0 && nc[num + 2] > 0) {
+                nc[num]--;
+                nc[num + 1]--;
+                nc[num + 2]--;
+            } else {
+                return false;
+            }
         }
-        for (int i = 0; i <= 1; ++i) {
-            char c = '0' + i;
-            path += c;
-            hasAllCodesBP(res, path, k);
-            path.pop_back();
-        }
+        return true;
     }
 
-    vector<bool> checkIfPrerequisite(int n, vector<vector<int>>& prerequisites, vector<vector<int>>& queries) {
+    vector<string> stringMatching(vector<string> &words) {
+        sort(words.begin(), words.end(), [](const auto &w1, const auto &w2) {
+            return w1.size() == w2.size() ? w1 < w2 : w1.size() < w2.size();
+        });
+        vector<string> res;
+        for (int i = 0; i < words.size(); ++i) {
+            for (int j = i; j < words.size(); ++j) {
+                if (i != j && words[j].find(words[i]) != words[j].npos) {
+                    res.emplace_back(words[i]);
+                    break;
+                }
+            }
+        }
+        return res;
+    }
 
+    vector<int> processQueries(vector<int> &queries, int m) {
+        vector<int> p(m);
+        iota(p.begin(), p.end(), 1);
+        vector<int> ans(queries.size());
+        for (int i = 0; i < queries.size(); ++i) {
+            for (int j = 0; j < m; ++j) {
+                if (p[j] == queries[i]) {
+                    ans[i] = j;
+                    p.erase(p.begin() + j);
+                    p.insert(p.begin(), queries[i]);
+                    break;
+                }
+            }
+        }
+        return ans;
+    }
+
+    string entityParser(string text) {
+        
     }
 };
 
