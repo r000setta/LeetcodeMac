@@ -16,7 +16,6 @@ using namespace std;
 int main() {
     WeekSolution2 ws;
     vector<int> v1{1, 2, 3, 4};
-//    ws.hasAllCodes("0110", 2);
     vector<string> v2{"leetcoder", "leetcode", "od", "hamlet", "am"};
     cout << ws.concatenatedBinary(11);
 }
