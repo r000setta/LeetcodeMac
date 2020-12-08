@@ -18,5 +18,5 @@ int main() {
     vector<int> v1{1, 2, 3, 4};
 //    ws.hasAllCodes("0110", 2);
     vector<string> v2{"leetcoder", "leetcode", "od", "hamlet", "am"};
-    ws.stringMatching(v2);
+    cout << ws.concatenatedBinary(11);
 }

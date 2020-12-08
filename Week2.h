@@ -618,7 +618,127 @@ public:
     }
 
     string entityParser(string text) {
-        
+        map<string, string> pool = {
+                {"&quot;",  "\""},
+                {"&apos;",  "'"},
+                {"&amp;",   "&"},
+                {"&gt;",    ">"},
+                {"&lt;",    "<"},
+                {"&frasl;", "/"}
+        };
+        string key;
+        string res;
+        for (auto c:text) {
+            if (c == '&') {
+                if (!key.empty()) {
+                    res += key;
+                    key.erase();
+                }
+                key.push_back(c);
+            } else if (c != ';') {
+                key.push_back(c);
+            } else {
+                key.push_back(c);
+                if (pool.find(key) != pool.end()) {
+                    res += pool[key];
+                    key.erase();
+                } else {
+                    res += key;
+                    key.erase();
+                }
+            }
+        }
+        if (!key.empty()) {
+            res += key;
+        }
+        return res;
+    }
+
+    vector<int> minSubsequence(vector<int> &nums) {
+        sort(nums.begin(), nums.end(), greater<int>());
+        int sum = 0;
+        for (int n:nums) sum += n;
+        int tar = 0;
+        vector<int> res;
+        for (int i:nums) {
+            res.emplace_back(i);
+            tar += i;
+            if (tar > sum / 2) {
+                break;
+            }
+        }
+        return res;
+    }
+
+    string interpret(string command) {
+        string res;
+        string key;
+        for (auto c:command) {
+            if (c == 'G') {
+                res += 'G';
+            } else {
+                key += c;
+                if (key == "()") {
+                    key = "";
+                    res += 'o';
+                } else if (key == "(al)") {
+                    key = "";
+                    res += "al";
+                }
+            }
+        }
+        if (key != "") {
+            res += key;
+        }
+        return res;
+    }
+
+    int maxOperations(vector<int> &nums, int k) {
+        sort(nums.begin(), nums.end());
+        int res = 0;
+        int l = 0, r = nums.size() - 1;
+        while (l <= r) {
+            if (nums[l] + nums[r] == k) {
+                l++;
+                r--;
+                res++;
+            } else if (nums[l] + nums[r] > k) {
+                r--;
+            } else {
+                l++;
+            }
+        }
+        return res;
+    }
+
+    int concatenatedBinary(int n) {
+        unsigned long long res = 0;
+        unsigned long long mod = 1e9 + 7;
+        vector<string> v(n);
+        if (n == 1) return 1;
+        v[0] = "1";
+        for (int i = 1; i < n; ++i) {
+            if ((i & 1) == 0) {
+                v[i] = v[i / 2 - 1] + '1';
+            } else {
+                v[i] = v[i / 2] + '0';
+            }
+        }
+        int k = 0, f = 0;
+        for (int i = v.size() - 1; i >= 0; --i) {
+            for (int j = v[i].size() - 1; j >= 0; --j) {
+                unsigned long long tmp;
+                if (f == 0) {
+                    tmp = v[i][j] - '0';
+                    f++;
+                } else {
+                    unsigned long long t = (2 << (k++)) % mod;
+                    tmp = (v[i][j] - '0') * t;
+                }
+                res += tmp;
+            }
+        }
+        return res;
     }
 };
 
