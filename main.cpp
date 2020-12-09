@@ -8,14 +8,13 @@
 #include "top.h"
 #include "Weekly.h"
 #include "solution2.h"
+#include "Solution3.h"
 #include "DpSolution.h"
 #include "Week2.h"
 
 using namespace std;
 
 int main() {
-    WeekSolution2 ws;
-    vector<int> v1{1, 2, 3, 4};
-    vector<string> v2{"leetcoder", "leetcode", "od", "hamlet", "am"};
-    cout << ws.concatenatedBinary(11);
+    Solution3 s3;
+    cout << s3.minFlips(2,6,5);
 }

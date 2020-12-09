@@ -740,6 +740,22 @@ public:
         }
         return res;
     }
+
+    vector<int> smallerNumbersThanCurrent(vector<int> &nums) {
+        vector<int> cnt(101), sum(101);
+        for (int n:nums) {
+            cnt[n]++;
+        }
+        sum[0] = cnt[0];
+        for (int i = 1; i < sum.size(); ++i) {
+            sum[i] = sum[i - 1] + cnt[i];
+        }
+        vector<int> res(nums.size());
+        for (int i = 0; i < res.size(); ++i) {
+            res[i] = sum[nums[i]] - cnt[nums[i]];
+        }
+        return res;
+    }
 };
 
 #endif //LEETCODEMAC_WEEK2_H

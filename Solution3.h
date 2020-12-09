@@ -9,6 +9,7 @@
 #include <string>
 #include <queue>
 #include <unordered_set>
+#include <numeric>
 
 using namespace std;
 
@@ -114,7 +115,116 @@ public:
         }
         return ret;
     }
-};
 
+    string rankTeams(vector<string> &votes) {
+        int n = votes.size();
+        unordered_map<char, vector<int>> ranking;
+        for (char v:votes[0]) {
+            ranking[v].resize(votes[0].size());
+        }
+        for (const auto &vote:votes) {
+            for (int i = 0; i < vote.size(); ++i) {
+                ++ranking[vote[i]][i];
+            }
+        }
+
+        using pcv=pair<char, vector<int>>;
+        vector<pcv> result(ranking.begin(), ranking.end());
+        sort(result.begin(), result.end(), [](const pcv &l, const pcv &r) {
+            return l.second > r.second || (l.second == r.second && l.first < r.first);
+        });
+        string ans;
+        for (auto&[v, r]:result) {
+            ans += v;
+        }
+        return ans;
+    }
+
+    int uniquePaths(int m, int n) {
+        int N = n + m - 2;
+        double res = 1;
+        for (int i = 1; i < m; i++)
+            res = res * (N - (m - 1) + i) / i;
+        return (int) res;
+    }
+
+    bool isSubPath(ListNode *head, TreeNode *root) {
+        if (root == nullptr) return false;
+        return isSubPathHelp(head, root) || isSubPath(head, root->left) || isSubPath(head, root->right);
+    }
+
+    bool isSubPathHelp(ListNode *head, TreeNode *root) {
+        if (head == nullptr) return true;
+        if (root == nullptr) return false;
+        if (head->val != root->val) return false;
+        return isSubPathHelp(head->next, root->left) || isSubPathHelp(head->next, root->right);
+    }
+
+    vector<int> getNoZeroIntegers(int n) {
+        for (int i = 1; i <= n / 2; ++i) {
+            if (getNoZeroIntegersCheck(i) && getNoZeroIntegersCheck(n - i))
+                return {i, n - i};
+        }
+        return {};
+    }
+
+    bool getNoZeroIntegersCheck(int n) {
+        while (n) {
+            if ((n % 10) == 0) return false;
+            n /= 10;
+        }
+        return true;
+    }
+
+    int minFlips(int a, int b, int c) {
+        int res = 0;
+        while (c != 0) {
+            int tar = c & 1;
+            int x = a == 0 ? 0 : a & 1;
+            int y = b == 0 ? 0 : b & 1;
+            if (tar == 1) {
+                if (!(x || y)) res++;
+            } else {
+                if (x) res++;
+                if (y) res++;
+            }
+            c = c >> 1;
+            a = a >> 1;
+            b = b >> 1;
+        }
+        while (a != 0) {
+            if (a & 1) res++;
+            a >>= 1;
+        }
+        while (b != 0) {
+            if (b & 1) res++;
+            b >>= 1;
+        }
+        return res;
+    }
+
+    vector<int> makeConnectedFa;
+
+    int makeConnectedFind(int x) {
+        return x == makeConnectedFa[x] ? x : makeConnectedFa[x] = makeConnectedFind(makeConnectedFa[x]);
+    }
+
+    int makeConnected(int n, vector<vector<int>> &connections) {
+        if (connections.size() < n - 1) {
+            return -1;
+        }
+        makeConnectedFa.resize(n);
+        iota(makeConnectedFa.begin(), makeConnectedFa.end(), 0);
+        int part = n;
+        for (auto &&c:connections) {
+            int p = makeConnectedFind(c[0]), q = makeConnectedFind(c[1]);
+            if (p != q) {
+                --part;
+                makeConnectedFa[p] = q;
+            }
+        }
+        return part - 1;
+    }
+};
 
 #endif //LEETCODEMAC_SOLUTION3_H
