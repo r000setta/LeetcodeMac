@@ -128,7 +128,7 @@ public:
             }
         }
 
-        using pcv=pair<char, vector<int>>;
+        using pcv = pair<char, vector<int>>;
         vector<pcv> result(ranking.begin(), ranking.end());
         sort(result.begin(), result.end(), [](const pcv &l, const pcv &r) {
             return l.second > r.second || (l.second == r.second && l.first < r.first);
@@ -224,6 +224,32 @@ public:
             }
         }
         return part - 1;
+    }
+
+    bool lemonadeChange(vector<int> &bills) {
+        vector<int> vec(11);
+        for (int i:bills) {
+            if (i == 5) {
+                vec[5]++;
+            } else if (i == 10) {
+                if (vec[5] > 0) {
+                    vec[5]--;
+                    vec[10]++;
+                } else {
+                    return false;
+                }
+            } else if (i == 20) {
+                if (vec[10] > 0 && vec[5] > 0) {
+                    vec[10]--;
+                    vec[5]--;
+                } else if (vec[5] >= 3) {
+                    vec[5] -= 3;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 };
 
