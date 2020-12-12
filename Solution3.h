@@ -251,6 +251,124 @@ public:
         }
         return true;
     }
+
+    int wiggleMaxLength(vector<int> &nums) {
+        int up = 1, down = 1;
+        for (int i = 1; i < nums.size(); ++i) {
+            if (nums[i] > nums[i - 1]) {
+                up = down + 1;
+            } else if (nums[i] < nums[i - 1]) {
+                down = up + 1;
+            }
+        }
+        return nums.size() == 0 ? 0 : max(down, up);
+    }
+
+    int minTimeToVisitAllPoints(vector<vector<int>> &points) {
+        int res = 0;
+        for (int i = 1; i < points.size(); ++i) {
+            int x = abs(points[i][0] - points[i - 1][0]);
+            int y = abs(points[i][1] - points[i - 1][1]);
+            res += min(x, y) + abs(x - y);
+        }
+        return res;
+    }
+
+    int countServers(vector<vector<int>> &grid) {
+        int m = grid.size(), n = grid[0].size();
+        vector<int> cntm(m), cntn(n);
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == 1) {
+                    ++cntm[i];
+                    ++cntn[j];
+                }
+            }
+        }
+        int ans = 0;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (grid[i][j] == 1 && (cntm[i] > 1 || cntn[j] > 1)) {
+                    ++ans;
+                }
+            }
+        }
+        return ans;
+    }
+
+    struct Trie {
+        unordered_map<char, Trie *> child;
+        priority_queue<string> words;
+    };
+
+    void addWord(Trie *root, const string &word) {
+        Trie *cur = root;
+        for (const char &ch:word) {
+            if (!cur->child.count(ch)) {
+                cur->child[ch] = new Trie();
+            }
+            cur->words.push(word);
+            if (cur->words.size() > 3) {
+                cur->words.pop();
+            }
+        }
+    }
+
+    vector<vector<string>> suggestedProducts(vector<string> &products, string searchWord) {
+        Trie *root = new Trie();
+        for (const auto &word:products) {
+            addWord(root, word);
+        }
+        vector<vector<string>> ans;
+        Trie *cur = root;
+    }
+
+    vector<vector<int>> shiftGrid(vector<vector<int>> &grid, int k) {
+        int n = grid.size(), m = grid[0].size();
+        vector<vector<int>> res = grid;
+        vector<int> arr;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                arr.push_back(grid[i][j]);
+            }
+        }
+        vector<int> arr1 = arr;
+        for (int i = 0; i < arr.size(); ++i) {
+            arr1[(k + i) % (n * m)] = arr[i];
+        }
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < m; ++j) {
+                res[i][j] = arr1[i * m + j];
+            }
+        }
+        return res;
+    }
+
+    int maxSumDivThree(vector<int> &nums) {
+        int n = nums.size();
+        vector<vector<int>> dp(n + 1, vector<int>(3, 0));
+        dp[0][0] = 0, dp[0][1] = INT_MIN, dp[0][2] = INT_MIN;
+        for (int i = 1; i <= n; ++i) {
+            if (nums[i - 1] % 3 == 0) {
+                dp[i][0] = max(dp[i - 1][0], dp[i - 1][0] + nums[i - 1]);
+                dp[i][1] = max(dp[i - 1][1], dp[i - 1][1] + nums[i - 1]);
+                dp[i][2] = max(dp[i - 1][2], dp[i - 1][2] + nums[i - 1]);
+            } else if (nums[i - 1] % 3 == 1) {
+                dp[i][0] = max(dp[i - 1][0], dp[i - 1][2] + nums[i - 1]);
+                dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] + nums[i - 1]);
+                dp[i][2] = max(dp[i - 1][2], dp[i - 1][1] + nums[i - 1]);
+            } else if (nums[i - 1] % 3 == 2) {
+                dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + nums[i - 1]);
+                dp[i][1] = max(dp[i - 1][1], dp[i - 1][2] + nums[i - 1]);
+                dp[i][2] = max(dp[i - 1][2], dp[i - 1][0] + nums[i - 1]);
+            }
+        }
+        return dp[n][0];
+    }
+
+    int minPushBox(vector<vector<char>>& grid) {
+
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION3_H
