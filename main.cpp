@@ -16,5 +16,6 @@ using namespace std;
 
 int main() {
     Solution3 s3;
-    cout << s3.minFlips(2,6,5);
+    vector<int> v1{5,3,1,4,2};
+    s3.stoneGameVII(v1);
 }

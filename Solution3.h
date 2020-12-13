@@ -116,29 +116,29 @@ public:
         return ret;
     }
 
-    string rankTeams(vector<string> &votes) {
-        int n = votes.size();
-        unordered_map<char, vector<int>> ranking;
-        for (char v:votes[0]) {
-            ranking[v].resize(votes[0].size());
-        }
-        for (const auto &vote:votes) {
-            for (int i = 0; i < vote.size(); ++i) {
-                ++ranking[vote[i]][i];
-            }
-        }
-
-        using pcv = pair<char, vector<int>>;
-        vector<pcv> result(ranking.begin(), ranking.end());
-        sort(result.begin(), result.end(), [](const pcv &l, const pcv &r) {
-            return l.second > r.second || (l.second == r.second && l.first < r.first);
-        });
-        string ans;
-        for (auto&[v, r]:result) {
-            ans += v;
-        }
-        return ans;
-    }
+//    string rankTeams(vector<string> &votes) {
+//        int n = votes.size();
+//        unordered_map<char, vector<int>> ranking;
+//        for (char v:votes[0]) {
+//            ranking[v].resize(votes[0].size());
+//        }
+//        for (const auto &vote:votes) {
+//            for (int i = 0; i < vote.size(); ++i) {
+//                ++ranking[vote[i]][i];
+//            }
+//        }
+//
+//        using pcv = pair<char, vector<int>>;
+//        vector<pcv> result(ranking.begin(), ranking.end());
+//        sort(result.begin(), result.end(), [](const pcv &l, const pcv &r) {
+//            return l.second > r.second || (l.second == r.second && l.first < r.first);
+//        });
+//        string ans;
+//        for (auto&[v, r]:result) {
+//            ans += v;
+//        }
+//        return ans;
+//    }
 
     int uniquePaths(int m, int n) {
         int N = n + m - 2;
@@ -366,8 +366,117 @@ public:
         return dp[n][0];
     }
 
-    int minPushBox(vector<vector<char>>& grid) {
+    bool containsDuplicate(vector<int> &nums) {
+        unordered_set<int> cnt;
+        for (int n:nums) {
+            if (cnt.count(n)) return true;
+            cnt.insert(n);
+        }
+        return false;
+    }
 
+    int subtractProductAndSum(int n) {
+        unsigned int sum = 0;
+        unsigned int pro = 1;
+        while (n != 0) {
+            int t = n % 10;
+            sum += t;
+            pro *= t;
+            n /= 10;
+        }
+        return pro - sum;
+    }
+
+//    vector<vector<int>> groupThePeople(vector<int> &groupSizes) {
+//        unordered_map<int, vector<int>> groups;
+//        for (int i = 0; i < groupSizes.size(); ++i) {
+//            groups[groupSizes[i]].push_back(i);
+//        }
+//        vector<vector<int>> ans;
+//        for (auto&[gsize, users]:groups) {
+//            for (auto iter = users.begin(); iter != users.end(); iter = next(iter, gsize)) {
+//                ans.emplace_back(iter, next(iter, gsize));
+//            }
+//        }
+//        return ans;
+//    }
+
+    int numberOfMatches(int n) {
+        int res = 0;
+        while (n != 0) {
+            if (n % 2) {
+                res += (n - 1) / 2;
+                n = (n - 1) / 2 + 1;
+            } else {
+                res += n / 2;
+                n /= 2;
+            }
+        }
+        return res;
+    }
+
+    int minPartitions(string n) {
+        int m = -1;
+        for (char c:n) {
+            m = max(m, c - '0');
+        }
+        return m;
+    }
+
+    int stoneGameVII(vector<int> &stones) {
+        int m = stones.size();
+        vector<int> pre(m + 1);
+        pre[0] = 0;
+        for (int i = 1; i < pre.size(); ++i) {
+            pre[i] = pre[i - 1] + stones[i - 1];
+        }
+        int a = 0, b = 0;
+        bool flag = true;
+        int l = 0, r = stones.size() - 1;
+        while (l <= r) {
+            if (flag) {
+                if (stones[l] > stones[r]) {
+                    r--;
+                } else {
+                    l++;
+                }
+                a += pre[r + 1] - pre[l];
+                flag = !flag;
+            } else {
+                if (r - l <= 2) {
+                    if (stones[l] > stones[r]) {
+                        r--;
+                    } else {
+                        l++;
+                    }
+                    b += pre[r + 1] - pre[l];
+                    flag = !flag;
+                } else {
+                    if (stones[l + 1] > stones[r - 1]) {
+                        l++;
+                    } else {
+                        r--;
+                    }
+                    b += pre[r + 1] - pre[l];
+                    flag = !flag;
+                }
+            }
+        }
+        return a - b;
+    }
+
+    bool stoneGame(vector<int> &piles) {
+        int m = piles.size();
+        vector<vector<int>> dp(m, vector<int>(m));
+        for (int i = 0; i < m; ++i) {
+            dp[i][i] = piles[i];
+        }
+        for (int i = m - 2; i >= 0; --i) {
+            for (int j = i + 1; j < m; ++j) {
+                dp[i][j] = max(piles[i] - dp[i + 1][j], piles[j] - dp[i][j - 1]);
+            }
+        }
+        return dp[0][m - 1] > 0;
     }
 };
 
