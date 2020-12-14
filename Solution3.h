@@ -10,6 +10,7 @@
 #include <queue>
 #include <unordered_set>
 #include <numeric>
+#include "solution.h"
 
 using namespace std;
 
@@ -477,6 +478,30 @@ public:
             }
         }
         return dp[0][m - 1] > 0;
+    }
+
+    int getDecimalValue(ListNode *head) {
+        ListNode *cur = head;
+        int ans = 0;
+        while (cur != nullptr) {
+            ans=ans*2+cur->val;
+            cur=cur->next;
+        }
+        return ans;
+    }
+
+    vector<vector<string>> groupAnagrams(vector<string> &strs) {
+        unordered_map<string, vector<string>> mp;
+        for (string &str:strs) {
+            string key = str;
+            sort(key.begin(), key.end());
+            mp[key].emplace_back(str);
+        }
+        vector<vector<string>> ans;
+        for (auto it = mp.begin(); it != mp.end(); ++it) {
+            ans.emplace_back(it->second);
+        }
+        return ans;
     }
 };
 

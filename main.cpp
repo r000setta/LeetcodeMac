@@ -16,6 +16,7 @@ using namespace std;
 
 int main() {
     Solution3 s3;
-    vector<int> v1{5,3,1,4,2};
-    s3.stoneGameVII(v1);
+    vector<int> v1{5, 3, 1, 4, 2};
+    cout << pow(2, 0);
+//    s3.stoneGameVII(v1);
 }
