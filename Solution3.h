@@ -424,45 +424,22 @@ public:
     }
 
     int stoneGameVII(vector<int> &stones) {
-        int m = stones.size();
-        vector<int> pre(m + 1);
-        pre[0] = 0;
-        for (int i = 1; i < pre.size(); ++i) {
-            pre[i] = pre[i - 1] + stones[i - 1];
-        }
-        int a = 0, b = 0;
-        bool flag = true;
-        int l = 0, r = stones.size() - 1;
-        while (l <= r) {
-            if (flag) {
-                if (stones[l] > stones[r]) {
-                    r--;
-                } else {
-                    l++;
-                }
-                a += pre[r + 1] - pre[l];
-                flag = !flag;
-            } else {
-                if (r - l <= 2) {
-                    if (stones[l] > stones[r]) {
-                        r--;
-                    } else {
-                        l++;
-                    }
-                    b += pre[r + 1] - pre[l];
-                    flag = !flag;
-                } else {
-                    if (stones[l + 1] > stones[r - 1]) {
-                        l++;
-                    } else {
-                        r--;
-                    }
-                    b += pre[r + 1] - pre[l];
-                    flag = !flag;
-                }
+        int n = stones.size();
+        vector<vector<int>> dp(n, vector<int>(n));
+        for (int i = 0; i < n; ++i) {
+            for (int j = i; j < n; ++j) {
+                if (i == j) dp[i][j] = stones[i];
+                else dp[i][j] = stones[j] + dp[i][j - 1];
             }
         }
-        return a - b;
+        vector<vector<int>> res(n, vector<int>(n));
+        for (int i = n - 1; i >= 0; --i) {
+            for (int j = i + 1; j < n; ++j) {
+                if (j - i == 1) res[i][j] = max(stones[i], stones[j]);
+                else res[i][j] = max(dp[i + 1][j] - res[i + 1][j], dp[i][j - 1] - res[i][j - 1]);
+            }
+        }
+        return res[0][n - 1];
     }
 
     bool stoneGame(vector<int> &piles) {
