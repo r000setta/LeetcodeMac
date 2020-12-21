@@ -521,6 +521,42 @@ public:
         }
         return stoi(strN);
     }
+
+    void rotate(vector<vector<int>> &matrix) {
+        int m = matrix.size();
+        int left = 0, right = matrix.size() - 1;
+        while (left < right) {
+            for (int i = 0; i < right - left; ++i) {
+                swap(matrix[left][i + left], matrix[left + i][right]);
+                swap(matrix[left][i + left], matrix[right][right - i]);
+                swap(matrix[left][i + left], matrix[right - i][left]);
+            }
+            left++;
+            right--;
+        }
+    }
+
+    string removeDuplicateLetters(string s) {
+        vector<int> vis(26), num(26);
+        for (char ch:s) num[ch - 'a']++;
+        string stk;
+        for (char ch:s) {
+            if (!vis[ch - 'a']) {
+                while (!stk.empty() && stk.back() > ch) {
+                    if (num[stk.back() - 'a'] > 0) {
+                        vis[stk.back() - 'a'] = 0;
+                        stk.pop_back();
+                    } else {
+                        break;
+                    }
+                }
+                vis[ch - 'a'] = 1;
+                stk.push_back(ch);
+            }
+            num[ch - 'a'] -= 1;
+        }
+        return stk;
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION3_H
