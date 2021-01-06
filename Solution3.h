@@ -2,6 +2,7 @@
 #define LEETCODEMAC_SOLUTION3_H
 
 #include <vector>
+
 #include <unordered_map>
 #include <map>
 #include <cmath>
@@ -497,6 +498,176 @@ public:
             }
         }
         return stoi(strN);
+    }
+
+    bool wordPattern(string pattern, string str) {
+        unordered_map<string, char> str2ch;
+        unordered_map<char, string> ch2str;
+        int m = str.size();
+        int i = 0;
+        for (auto ch:pattern) {
+            if (i >= m) return false;
+
+        }
+    }
+
+    int maxProfit(vector<int> &prices, int fee) {
+        int m = prices.size();
+        int dp[65535][2];
+        dp[0][0] = 0;
+        dp[0][1] = -prices[0];
+        for (int i = 1; i < m; ++i) {
+            dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i] - fee);
+            dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
+        }
+        return dp[m - 1][0];
+    }
+
+    int minCostClimbingStairs(vector<int> &cost) {
+
+    }
+
+    string reformatNumber(string number) {
+        string tmp = "";
+        for (char c:number) {
+            if (isdigit(c)) {
+                tmp += c;
+            }
+        }
+        string res = "";
+    }
+
+    vector<vector<int>> zigzagLevelOrder(TreeNode *root) {
+        vector<vector<int>> res;
+        int level = 0;
+        if (!root) return res;
+        queue<TreeNode *> q;
+        q.push(root);
+        while (!q.empty()) {
+            int size = q.size();
+            vector<int> tmp(size);
+            for (int i = 0; i < size; ++i) {
+                auto t = q.front();
+                q.pop();
+                if (level % 2) tmp[size - i - 1] = t->val;
+                else tmp[i] = t->val;
+                if (t->left) q.push(t->left);
+                if (t->right) q.push(t->right);
+            }
+            level++;
+            res.emplace_back(tmp);
+        }
+        return res;
+    }
+
+    int candy(vector<int> &ratings) {
+        int n = ratings.size();
+        vector<int> left(n);
+        for (int i = 0; i < n; ++i) {
+            if (i > 0 && ratings[i] > ratings[i - 1]) {
+                left[i] = left[i - 1] + 1;
+            } else {
+                left[i] = 1;
+            }
+        }
+        int right = 0, ret = 0;
+        for (int i = n - 1; i >= 0; --i) {
+            if (i < n - 1 && ratings[i] > ratings[i + 1]) {
+                right++;
+            } else {
+                right = 1;
+            }
+            ret += max(left[i], right);
+        }
+        return ret;
+    }
+
+    int countPairs(vector<int> &deliciousness) {
+        unordered_map<int, int> mp;
+        auto MOD = 1000000007;
+        int ans = 0;
+        int len = deliciousness.size();
+        for (int num:deliciousness) {
+            int p = 1;
+            for (int i = 0; i <= 21; ++i) {
+                if (p >= num && mp.count(p - num)) {
+                    ans += mp[p - num];
+                    ans %= MOD;
+                }
+                p *= 2;
+            }
+            mp[num]++;
+        }
+        return ans;
+    }
+
+    int waysToSplit(vector<int> &nums) {
+        int m = nums.size();
+        if (m < 3) return 0;
+        vector<int> pre(m + 1);
+        pre[0] = 0, pre[1] = nums[0];
+        for (int i = 2; i < pre.size(); ++i) {
+            pre[i] = pre[i - 1] + nums[i - 1];
+        }
+        int res = 0;
+        auto MOD = 1000000007;
+        for (int i = 0; i < m; ++i) {
+            for (int j = i + 1; j < m; ++j) {
+                int left = pre[i + 1] - pre[0];
+                int mid = pre[j + 1] - pre[i + 1];
+                int right = pre[m] - pre[j + 1];
+                if (left <= mid && mid <= right) {
+                    res++;
+                    res %= MOD;
+                }
+            }
+        }
+        return res;
+    }
+
+    bool halvesAreAlike(string s) {
+        int r1 = 0, r2 = 0;
+        for (int i = 0; i < s.size() / 2; ++i) {
+            if (halvesAreAlikeCheck(s[i])) {
+                r1++;
+            }
+        }
+        for (int i = s.size() / 2; i < s.size(); ++i) {
+            if (halvesAreAlikeCheck(s[i])) {
+                r2++;
+            }
+        }
+        return r1 == r2;
+    }
+
+    inline bool halvesAreAlikeCheck(char a) {
+        a = tolower(a);
+        return a == 'a' || a == 'o' || a == 'e' || a == 'i' || a == 'u';
+    }
+
+#define PII pair<int,int>
+
+    int eatenApples(vector<int> &apples, vector<int> &days) {
+        int res = 0;
+        priority_queue<PII, vector<PII >, greater<>> save;
+        for (int i = 0; i < apples.size() || !save.empty(); ++i) {
+            while (!save.empty() && save.top().first == i) {
+                save.pop();
+            }
+            if (i < apples.size() && apples[i] != 0) {
+                save.push(make_pair(i + days[i], apples[i]));
+            }
+            if (!save.empty()) {
+                PII tmp = save.top();
+                save.pop();
+                res++;
+                tmp.second--;
+                if (tmp.second > 0) {
+                    save.push(tmp);
+                }
+            }
+        }
+        return res;
     }
 };
 

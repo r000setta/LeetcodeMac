@@ -11,12 +11,18 @@
 #include "Solution3.h"
 #include "DpSolution.h"
 #include "Week2.h"
+#include "Solution4.h"
 
 using namespace std;
 
 int main() {
     Solution3 s3;
-    vector<int> v1{5, 3, 1, 4, 2};
-    cout << pow(2, 0);
-//    s3.stoneGameVII(v1);
+    Solution4 s4;
+    vector<int> vec{1, 2, 2, 2, 5, 0};
+    vector<vector<int>> v2{{1,  1,  1,  -1, -1},
+                           {1,  1,  1,  -1, -1},
+                           {-1, -1, -1, 1,  1},
+                           {1,  1,  1,  1,  -1},
+                           {-1, -1, -1, -1, -1}};
+    s4.findBall(v2);
 }
