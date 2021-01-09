@@ -10,16 +10,18 @@
 #include "solution2.h"
 #include "Solution3.h"
 #include "DpSolution.h"
+#include "Solution4.h"
 #include "Week2.h"
 
 using namespace std;
 
 int main() {
-    Solution3 s3;
-    vector<vector<int>> v1{{5,  1,  9,  11},
-                           {2,  4,  8,  10},
-                           {13, 3,  6,  7},
-                           {15, 14, 12, 16}};
-    s3.rotate(v1);
+    Solution4 s4;
+    vector<vector<string>> v1{{"John", "johnsmith@mail.com", "john_newyork@mail.com"},
+                              {"John", "johnsmith@mail.com", "john00@mail.com"},
+                              {"Mary", "mary@mail.com"},
+                              {"John", "johnnybravo@mail.com"}};
+    s4.accountsMerge(v1);
+
 //    s3.stoneGameVII(v1);
 }
