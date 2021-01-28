@@ -669,6 +669,154 @@ public:
         }
         return res;
     }
+
+    int firstUniqChar(string s) {
+        vector<int> vec(26);
+        for (char c:s) {
+            vec[c - 'a']++;
+        }
+        for (int i = 0; i < s.size(); ++i) {
+            if (vec[s[i] - 'a'] == 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    int maximalRectangle(vector<vector<char>> &matrix) {
+        if (matrix.size() == 0) return 0;
+        int m = matrix.size(), n = matrix[0].size();
+        vector<vector<int>> dp(m, vector<int>(n));
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (j == 0) {
+                    dp[i][j] = matrix[i][j] - '0';
+                } else {
+                    if (matrix[i][j] == '1') {
+                        dp[i][j] = dp[i][j - 1] + 1;
+                    }
+                }
+            }
+        }
+        int res = 0;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (dp[i][j] != 0) {
+                    int tmp = dp[i][j];
+                    for (int k = i; k >= 0; --k) {
+                        if (dp[k][j] == 0) {
+                            break;
+                        }
+                        int height = i - k + 1;
+                        tmp = min(tmp, dp[k][j]);
+                        res = max(res, tmp * height);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+    bool isIsomorphic(string s, string t) {
+        unordered_map<char, char> smap;
+        unordered_map<char, char> tmap;
+        if (s.size() != t.size()) return false;
+        for (int i = 0; i < s.size(); ++i) {
+            char x = s[i], y = t[i];
+            if (smap.count(x) && smap[x] != y || tmap.count(y) && tmap[y] != x) return false;
+            smap[x] = y;
+            tmap[y] = x;
+        }
+        return true;
+    }
+
+    int pivotIndex(vector<int> &nums) {
+        int m = nums.size();
+        vector<int> pre(m + 1);
+        pre[0] = 0;
+        for (int i = 1; i <= m; ++i) {
+            pre[i] = pre[i - 1] + nums[i - 1];
+        }
+        for (int i = 0; i < m; ++i) {
+            int x, y;
+            if (i == 0) x = 0; else x = pre[i];
+            if (i == m - 1) y = 0; else y = pre[m] - pre[i + 1];
+            if (x == y) return i;
+        }
+        return -1;
+    }
+
+    int maximumProduct(vector<int> &nums) {
+        sort(nums.begin(), nums.end());
+        int m = nums.size();
+        return max(nums[0] * nums[1] * nums[m - 1], nums[m - 1] * nums[m - 2] * nums[m - 3]);
+    }
+
+    int smallFind(vector<int> &parent, int x) {
+        if (parent[x] != x) {
+            parent[x] = smallFind(parent, parent[x]);
+        }
+        return parent[x];
+    }
+
+    void smallUnion(vector<int> &parent, int x, int y) {
+        int px = smallFind(parent, x);
+        int py = smallFind(parent, y);
+        if (px != py) {
+            parent[px] = py;
+        }
+    }
+
+    string smallestStringWithSwaps(string s, vector<vector<int>> &pairs) {
+        int n = pairs.size();
+        vector<int> parent(n);
+        vector<char> res(n);
+        for (int i = 0; i < n; ++i) parent[i] = i;
+        for (const auto &p:pairs) {
+            smallUnion(parent, p[0], p[1]);
+        }
+        unordered_map<int, vector<int>> mp;
+        for (int i = 0; i < n; ++i) {
+            mp[smallFind(parent, i)].push_back(i);
+        }
+        for (auto&[k, v]:mp) {
+            vector<int> c = v;
+            sort(v.begin(), v.end(), [&](auto a, auto b) {
+                return s[a] < s[b];
+            });
+            for (int i = 0; i < c.size(); ++i) {
+                res[c[i]] = s[v[i]];
+            }
+        }
+        s = "";
+        for (const auto &e:res) s += e;
+        return s;
+    }
+
+    int calculate(string s) {
+        int x = 1, y = 0;
+        for (const auto &c:s) {
+            if (c == 'A') {
+                x = x * 2 + y;
+            } else {
+                y = y * 2 + x;
+            }
+        }
+        return x + y;
+    }
+
+    vector<int> fraction(vector<int> &cont) {
+        int high = 1, low = *cont.rbegin();
+        for (int i = cont.size() - 2; i >= 0; --i) {
+            high += low * cont[i];
+            swap(low, high);
+        }
+        return vector<int>{low, high};
+    }
+
+    int expectNumber(vector<int>& scores) {
+
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION3_H

@@ -190,7 +190,7 @@ public:
         unordered_map<int, set<string>> acc;
         for (int i = 0; i < m; ++i) {
             int t = accountsMergeFind(f, i);
-            int len = accounts[i].size();]
+            int len = accounts[i].size();
             for (int j = 1; j < len; ++j) {
                 acc[t].insert(accounts[i][j]);
             }

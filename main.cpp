@@ -16,12 +16,8 @@
 using namespace std;
 
 int main() {
-    Solution4 s4;
-    vector<vector<string>> v1{{"John", "johnsmith@mail.com", "john_newyork@mail.com"},
-                              {"John", "johnsmith@mail.com", "john00@mail.com"},
-                              {"Mary", "mary@mail.com"},
-                              {"John", "johnnybravo@mail.com"}};
-    s4.accountsMerge(v1);
-
+    Solution3 s3;
+    vector<int> v1{1,7,3,6,5,6};
+    s3.pivotIndex(v1);
 //    s3.stoneGameVII(v1);
 }
