@@ -767,31 +767,31 @@ public:
         }
     }
 
-    string smallestStringWithSwaps(string s, vector<vector<int>> &pairs) {
-        int n = pairs.size();
-        vector<int> parent(n);
-        vector<char> res(n);
-        for (int i = 0; i < n; ++i) parent[i] = i;
-        for (const auto &p:pairs) {
-            smallUnion(parent, p[0], p[1]);
-        }
-        unordered_map<int, vector<int>> mp;
-        for (int i = 0; i < n; ++i) {
-            mp[smallFind(parent, i)].push_back(i);
-        }
-        for (auto&[k, v]:mp) {
-            vector<int> c = v;
-            sort(v.begin(), v.end(), [&](auto a, auto b) {
-                return s[a] < s[b];
-            });
-            for (int i = 0; i < c.size(); ++i) {
-                res[c[i]] = s[v[i]];
-            }
-        }
-        s = "";
-        for (const auto &e:res) s += e;
-        return s;
-    }
+//    string smallestStringWithSwaps(string s, vector<vector<int>> &pairs) {
+//        int n = pairs.size();
+//        vector<int> parent(n);
+//        vector<char> res(n);
+//        for (int i = 0; i < n; ++i) parent[i] = i;
+//        for (const auto &p:pairs) {
+//            smallUnion(parent, p[0], p[1]);
+//        }
+//        unordered_map<int, vector<int>> mp;
+//        for (int i = 0; i < n; ++i) {
+//            mp[smallFind(parent, i)].push_back(i);
+//        }
+//        for (auto&[k, v]:mp) {
+//            vector<int> c = v;
+//            sort(v.begin(), v.end(), [&](auto a, auto b) {
+//                return s[a] < s[b];
+//            });
+//            for (int i = 0; i < c.size(); ++i) {
+//                res[c[i]] = s[v[i]];
+//            }
+//        }
+//        s = "";
+//        for (const auto &e:res) s += e;
+//        return s;
+//    }
 
     int calculate(string s) {
         int x = 1, y = 0;
@@ -814,9 +814,105 @@ public:
         return vector<int>{low, high};
     }
 
-    int expectNumber(vector<int>& scores) {
+    int numWays(int n, vector<vector<int>> &relation, int k) {
+        vector<vector<int>> dp(k + 1, vector<int>(n + 1));
+        dp[0][0] = 1;
+        for (int i = 0; i < k; ++i) {
+            for (const auto &r:relation) {
+                dp[i + 1][r[1]] += dp[i][r[0]];
+            }
+        }
+        return dp[k][n - 1];
+    }
+
+//    int minimumEffortPath(vector<vector<int>> &heights) {
+//        int dirs[4][2] = {{-1, 0},
+//                          {1,  0},
+//                          {0,  1},
+//                          {0,  -1}};
+//        int m = heights.size(), n = heights[0].size();
+//        int left = 0, right = 99999, ans = 0;
+//        while (left <= right) {
+//            int mid = (left + right) / 2;
+//            queue<pair<int, int>> q;
+//            q.emplace(0, 0);
+//            vector<bool> s(m * n);
+//            s[0] = true;
+//            while (!q.empty()) {
+//                auto[x, y]=q.front();
+//                q.pop();
+//                for (auto &dir:dirs) {
+//                    int nx = x + dir[0];
+//                    int ny = y + dir[1];
+//                    if (nx >= 0 && nx < m && ny >= 0 && ny < n && !s[nx * n + ny] &&
+//                        abs(heights[x][y] - heights[nx][ny]) <= mid) {
+//                        q.emplace(nx, ny);
+//                        s[nx * n + ny] = true;
+//                    }
+//                }
+//            }
+//            if (s[m * n - 1]) {
+//                ans = mid;
+//                right = mid - 1;
+//            } else {
+//                left = mid + 1;
+//            }
+//        }
+//        return ans;
+//    }
+
+    int paintingPlanHelp(int n, int a) {
+        if (a == 0) return 1;
+        int x = n, y = a, t = a;
+        for (int i = 0; i < t - 1; ++i) {
+            n--;
+            a--;
+            x *= n;
+            y *= a;
+        }
+        return (int) x / y;
+    }
+
+    int paintingPlan(int n, int k) {
+        if (k == n * n) return 1;
+        if (k == 0) return 0;
+        int res = 0;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (n * (i + j) - i * j == k) {
+                    res += paintingPlanHelp(n, i) + paintingPlanHelp(n, j);
+                }
+            }
+        }
+        return res;
+    }
+
+    int breakfastNumber(vector<int> &staple, vector<int> &drinks, int x) {
+        int res = 0;
+        int m = staple.size();
+        int mod = 1e9 + 7;
+        sort(staple.begin(), staple.end());
+        sort(drinks.begin(), drinks.end());
+        for (int i = 0; i < m; ++i) {
+            if (staple[i] >= x) break;
+            for (int j = 0; j < m; ++j) {
+                if (staple[i] + staple[j] <= x) {
+                    res++;
+                } else {
+                    break;
+                }
+            }
+        }
+        return res % mod;
+    }
+
+    int minTime(vector<int> &time, int m) {
+        int n = time.size();
+        if (m >= n) return 0;
 
     }
+
+
 };
 
 #endif //LEETCODEMAC_SOLUTION3_H

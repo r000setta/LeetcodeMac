@@ -17,7 +17,7 @@ using namespace std;
 
 int main() {
     Solution3 s3;
-    vector<int> v1{1,7,3,6,5,6};
-    s3.pivotIndex(v1);
+    vector<int> v1{1, 7, 3, 6, 5, 6};
+    s3.paintingPlan(2, 2);
 //    s3.stoneGameVII(v1);
 }
