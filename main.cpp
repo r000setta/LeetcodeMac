@@ -18,6 +18,7 @@ using namespace std;
 int main() {
     Solution3 s3;
     vector<int> v1{1, 7, 3, 6, 5, 6};
-    s3.paintingPlan(2, 2);
+    vector<string> v2{"blw", "bwl", "wlb"};
+    s3.numSimilarGroups(v2);
 //    s3.stoneGameVII(v1);
 }

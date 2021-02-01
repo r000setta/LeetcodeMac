@@ -906,12 +906,174 @@ public:
         return res % mod;
     }
 
-    int minTime(vector<int> &time, int m) {
-        int n = time.size();
-        if (m >= n) return 0;
-
+    int coinChange(vector<int> &coins, int amount) {
+        vector<int> dp(amount + 1);
+        dp[0] = 0;
+        for (int coin:coins) {
+            for (int i = coin; i <= amount; ++i) {
+                dp[i] = min(dp[i], dp[i - coin] + 1);
+            }
+        }
+        if (dp[amount] == amount + 1) {
+            dp[amount] = -1;
+        }
+        return dp[amount];
     }
 
+    int numSimilarGroupsFind(vector<int> &parent, int x) {
+        if (parent[x] != x) {
+            parent[x] = numSimilarGroupsFind(parent, parent[x]);
+        }
+        return parent[x];
+    }
+
+    void numSimilarGroupsUnion(vector<int> &parents, int x, int y) {
+        int px = numSimilarGroupsFind(parents, x);
+        int py = numSimilarGroupsFind(parents, y);
+        if (px != py) {
+            parents[px] = py;
+        }
+    }
+
+    int numSimilarGroups(vector<string> &strs) {
+        int n = strs.size();
+        vector<int> parent(n);
+        for (int i = 0; i < n; ++i) {
+            parent[i] = i;
+        }
+        for (int i = 0; i < n; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                string s1 = strs[i], s2 = strs[j];
+                if (isSimilar(s1, s2)) {
+                    numSimilarGroupsUnion(parent, i, j);
+                }
+            }
+        }
+        int res = 0;
+        for (int i = 0; i < n; ++i) {
+            if (parent[i] == i) {
+                res++;
+            }
+        }
+        return res;
+    }
+
+    bool isSimilar(string s1, string s2) {
+        if (s1.size() != s2.size()) return false;
+        int cnt = 0;
+        for (int i = 0; i < s1.size(); ++i) {
+            if (s1[i] != s2[i]) {
+                cnt++;
+            }
+        }
+        if (cnt == 2 || cnt == 0) return true;
+        return false;
+    }
+
+    int singleNumber(vector<int> &nums) {
+        int res = nums[0];
+        for (int i = 1; i < nums.size(); ++i) {
+            res = res ^ nums[i];
+        }
+        return res;
+    }
+
+    vector<int> fairCandySwap(vector<int> &A, vector<int> &B) {
+        int sa = accumulate(A.begin(), A.end(), 0);
+        int sb = accumulate(B.begin(), B.end(), 0);
+        int tmp = (sa - sb) / 2;
+        vector<int> res(2);
+        for (int i:A) {
+            for (int j:B) {
+                if (i - j == tmp) {
+                    res[0] = i;
+                    res[1] = j;
+                    return res;
+                }
+            }
+        }
+        return res;
+    }
+
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {
+        int rv = root->val, pv = p->val, qv = q->val;
+        if (rv > pv && rv > qv) {
+            return lowestCommonAncestor(root->left, p, q);
+        } else if (rv < pv && rv < qv) {
+            return lowestCommonAncestor(root->right, p, q);
+        } else {
+            return root;
+        }
+    }
+
+    int majorityElement(vector<int> &nums) {
+        int count = 1, candidate = -1;
+        for (int i:nums) {
+            if (candidate == i) {
+                count++;
+            } else if (--count == 0) {
+                candidate = i;
+                count = 1;
+            }
+        }
+        return candidate;
+    }
+
+    ListNode *mergeTwoLists(ListNode *l1, ListNode *l2) {
+        ListNode *res = new ListNode(0);
+        ListNode *tmp = res;
+        while (l1 != nullptr && l2 != nullptr) {
+            if (l1->val < l2->val) {
+                tmp->next = l1;
+                l1 = l1->next;
+                tmp = tmp->next;
+            } else {
+                tmp->next = l2;
+                l2 = l2->next;
+                tmp = tmp->next;
+            }
+        }
+        if (l1) {
+            tmp->next = l1;
+        }
+        if (l2) {
+            tmp->next = l2;
+        }
+        return res->next;
+    }
+
+    bool isPalindrome(int x) {
+        string a = to_string(x);
+        int l = 0, r = a.size() - 1;
+        while (l < r) {
+            if (a[l] != a[r]) return false;
+            l++;
+            r--;
+        }
+        return true;
+    }
+
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if (!headA || !headB) return nullptr;
+        ListNode *pa = headA, *pb = headB;
+        while (pa != pb) {
+            pa = pa == nullptr ? headB : pa->next;
+            pb = pb == nullptr ? headA : pb->next;
+        }
+        return pa;
+    }
+
+    int maxSubArray(vector<int> &nums) {
+        int res = INT_MIN;
+        int m = nums.size();
+        vector<int> dp(m);
+        dp[0] = nums[0];
+        for (int i = 1; i < m; ++i) {
+            dp[i] = max(nums[i], dp[i - 1] + nums[i]);
+            res = max(res, dp[i]);
+        }
+        return res;
+    }
 
 };
 
