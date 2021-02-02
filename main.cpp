@@ -12,13 +12,15 @@
 #include "DpSolution.h"
 #include "Solution4.h"
 #include "Week2.h"
+#include "TSolution.h"
 
 using namespace std;
 
 int main() {
     Solution3 s3;
-    vector<int> v1{1, 7, 3, 6, 5, 6};
+    TSolution ts;
+    vector<int> v1{1, 2, 3};
     vector<string> v2{"blw", "bwl", "wlb"};
-    s3.numSimilarGroups(v2);
+    ts.permute(v1);
 //    s3.stoneGameVII(v1);
 }
