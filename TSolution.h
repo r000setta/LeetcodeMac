@@ -173,6 +173,163 @@ public:
     }
 
     vector<int> grayCode(int n) {
+        vector<int> res(pow(2, n));
+        for (int i = 0; i <= pow(2, n); ++i) {
+            res[i] = i ^ (i >> 1);
+        }
+        return res;
+    }
+
+    ListNode *sortList(ListNode *head) {
+        if (head == nullptr || head->next == nullptr) return head;
+        ListNode *fast = head->next, *slow = head;
+        while (fast != nullptr && fast->next != nullptr) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+        ListNode *tmp = slow->next;
+        slow->next = nullptr;
+        ListNode *right = sortList(tmp);
+        ListNode *left = sortList(head);
+        ListNode *h = new ListNode(0);
+        ListNode *res = h;
+        while (left != nullptr && right != nullptr) {
+            if (left->val < right->val) {
+                h->next = left;
+                left = left->next;
+            } else {
+                h->next = right;
+                right = right->next;
+            }
+            h = h->next;
+        }
+        h->next = left != nullptr ? left : right;
+        return res->next;
+    }
+
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {
+        if (root == nullptr || p == root || q == root) {
+            return root;
+        }
+        TreeNode *left = lowestCommonAncestor(root->left, p, q);
+        TreeNode *right = lowestCommonAncestor(root->right, p, q);
+        if (left == nullptr) return right;
+        if (right == nullptr) return left;
+        return root;
+    }
+
+    vector<double> medianSlidingWindow(vector<int> &nums, int k) {
+        vector<double> res(nums.size() - k + 1);
+        for (int i = 0; i < nums.size() - k; ++i) {
+            vector<int> tmp(nums.begin() + i, nums.begin() + i + k);
+            sort(tmp.begin(), tmp.end());
+            if (k % 2) {
+                res[i] = tmp[i + k / 2];
+            } else {
+                res[i] = (tmp[i + k / 2] + tmp[i + k / 2 - 1]) / 2.0f;
+            }
+        }
+        return res;
+    }
+
+    int maxArea(vector<int> &height) {
+        int res = -1;
+        int l = 0, r = height.size() - 1;
+        while (l < r) {
+            int a = min(height[l], height[r]) * (r - l);
+            res = max(res, a);
+            if (height[l] <= height[r]) {
+                l++;
+            } else {
+                r--;
+            }
+        }
+        return res;
+    }
+
+    int uniquePaths(int m, int n) {
+        long long ans = 1;
+        for (int x = n, y = 1; y < m; ++x, ++y) {
+            ans = ans * x / y;
+        }
+        return ans;
+    }
+
+    ListNode *detectCycle(ListNode *head) {
+        ListNode *fast = head, *slow = head;
+        while (fast != nullptr && fast->next != nullptr) {
+            slow = slow->next;
+            fast = fast->next->next;
+            if (slow == fast) {
+                fast = head;
+                while (fast != slow) {
+                    slow = slow->next;
+                    fast = fast->next;
+                }
+                return fast;
+            }
+        }
+        return nullptr;
+    }
+
+    int threeSumClosest(vector<int> &nums, int target) {
+
+    }
+
+    string multiply(string num1, string num2) {
+
+    }
+
+    string addStrings(string num1, string num2) {
+
+    }
+};
+
+class MedianFinder {
+private:
+    int count;
+    priority_queue<int, vector<int>, greater<>> minHeap;
+    priority_queue<int, vector<int>> maxHeap;
+
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+        count = 0;
+        minHeap = priority_queue<int, vector<int>, greater<>>();
+        maxHeap = priority_queue<int, vector<int>>();
+    }
+
+    void addNum(int num) {
+        count++;
+        maxHeap.push(num);
+        minHeap.push(maxHeap.top());
+        maxHeap.pop();
+        if ((count & 1) != 0) {
+            maxHeap.push(minHeap.top());
+            minHeap.pop();
+        }
+    }
+
+    double findMedian() {
+        if ((count & 1) == 0) {
+            return (double) (maxHeap.top() + minHeap.top()) / 2;
+        } else {
+            return (double )maxHeap.top();
+        }
+    }
+};
+
+class LRUCache {
+public:
+    LRUCache(int capacity) {
+
+    }
+
+    int get(int key) {
+
+    }
+
+    void put(int key, int value) {
 
     }
 };

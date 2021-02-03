@@ -19,8 +19,8 @@ using namespace std;
 int main() {
     Solution3 s3;
     TSolution ts;
-    vector<int> v1{1, 2, 3};
+    vector<int> v1{1, 3, -1, -3, -5, 3, 6, 7};
     vector<string> v2{"blw", "bwl", "wlb"};
-    ts.permute(v1);
+    ts.uniquePaths(4, 4);
 //    s3.stoneGameVII(v1);
 }
