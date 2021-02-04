@@ -20,7 +20,13 @@ int main() {
     Solution3 s3;
     TSolution ts;
     vector<int> v1{1, 3, -1, -3, -5, 3, 6, 7};
+
+    TreeNode node1 = TreeNode(2);
+    TreeNode node2 = TreeNode(3);
+    TreeNode node3 = TreeNode(1);
+    node1.left = &node2;
+    node2.left = &node3;
     vector<string> v2{"blw", "bwl", "wlb"};
-    ts.uniquePaths(4, 4);
+    ts.diameterOfBinaryTree(&node1);
 //    s3.stoneGameVII(v1);
 }

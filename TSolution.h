@@ -283,6 +283,121 @@ public:
     string addStrings(string num1, string num2) {
 
     }
+
+    vector<vector<int>> threeSum(vector<int> &nums) {
+        int n = nums.size();
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> res;
+        for (int f = 0; f < n; ++f) {
+            if (f > 0 && nums[f] == nums[f - 1]) {
+                continue;
+            }
+            int third = n - 1;
+            int target = -nums[f];
+            for (int s = f + 1; s < n; ++s) {
+                if (s > f + 1 && nums[s] == nums[s - 1]) {
+                    continue;
+                }
+                while (s < third && nums[s] + nums[third] > target) {
+                    --third;
+                }
+                if (s == third) {
+                    break;
+                }
+                if (nums[s] + nums[third] == target) {
+                    res.emplace_back(vector<int>{nums[f], nums[s], nums[third]});
+                }
+            }
+        }
+        return res;
+    }
+
+    ListNode *mergeKLists(vector<ListNode *> &lists) {
+        if (lists.size() == 0) return nullptr;
+        ListNode *res = lists[0];
+        for (int i = 1; i < lists.size(); ++i) {
+            res = mergeTwo(res, lists[i]);
+        }
+        return res;
+    }
+
+    ListNode *mergeTwo(ListNode *a, ListNode *b) {
+        ListNode *res = new ListNode(0), *tmp = res;
+        while (a != nullptr && b != nullptr) {
+            if (a->val < b->val) {
+                tmp->next = a;
+                a = a->next;
+            } else {
+                tmp->next = b;
+                b = b->next;
+            }
+            tmp = tmp->next;
+        }
+        tmp->next = a == nullptr ? b : a;
+        return res->next;
+    }
+
+    int maxPathSum(TreeNode *root) {
+        int res = 0;
+        maxGain(root, res);
+        return res;
+    }
+
+    int maxGain(TreeNode *node, int &ans) {
+        if (node == nullptr) return 0;
+        int left = max(maxGain(node->left, ans), 0);
+        int right = max(maxGain(node->right, ans), 0);
+        int path = node->val + left + right;
+        ans = max(ans, path);
+        return node->val + max(left, right);
+    }
+
+    void moveZeroes(vector<int> &nums) {
+        if (nums.size() == 0) return;
+        int j = 0;
+        for (int i = 0; i < nums.size(); ++i) {
+            if (nums[i] != 0) {
+                swap(nums[i], nums[j]);
+                j++;
+            }
+        }
+    }
+
+    vector<int> findDisappearedNumbers(vector<int> &nums) {
+        vector<int> res;
+        vector<bool> tmp(nums.size() + 1);
+        for (int i:nums) {
+            tmp[i] = true;
+        }
+        for (int i = 1; i < tmp.size(); ++i) {
+            if (!tmp[i]) res.emplace_back(i);
+        }
+        return res;
+    }
+
+    bool isSymmetric(TreeNode *root) {
+        return isSymmetricCheck(root, root);
+    }
+
+    bool isSymmetricCheck(TreeNode *p, TreeNode *q) {
+        if (!p && !q) return true;
+        if (!p || !q) return false;
+        return p->val == q->val && isSymmetricCheck(p->left, q->right) && isSymmetricCheck(p->right, q->left);
+    }
+
+    int diameterOfBinaryTree(TreeNode *root) {
+        int res = 0;
+        diameterOfBinaryTreeHelp(root, res);
+        return res;
+    }
+
+    int diameterOfBinaryTreeHelp(TreeNode *root, int &res) {
+        if (root == nullptr) return 0;
+        if (root->left == nullptr && root->right == nullptr) return 1;
+        int t = diameterOfBinaryTreeHelp(root->left, res) + diameterOfBinaryTreeHelp(root->right, res);
+        res = max(t, res);
+        return t + 1;
+    }
 };
 
 class MedianFinder {
@@ -314,7 +429,7 @@ public:
         if ((count & 1) == 0) {
             return (double) (maxHeap.top() + minHeap.top()) / 2;
         } else {
-            return (double )maxHeap.top();
+            return (double) maxHeap.top();
         }
     }
 };
@@ -333,5 +448,44 @@ public:
 
     }
 };
+
+class MinStack {
+public:
+    stack<int> s1;
+    stack<int> s2;
+
+    /** initialize your data structure here. */
+    MinStack() {
+        s1 = stack<int>();
+        s2 = stack<int>();
+    }
+
+    void push(int x) {
+        s1.push(x);
+        if (s2.empty()) {
+            s2.push(x);
+        } else {
+            if (x <= s2.top()) {
+                s2.push(x);
+            }
+        }
+    }
+
+    void pop() {
+        if (s1.top() == s2.top()) {
+            s2.pop();
+        }
+        s1.pop();
+    }
+
+    int top() {
+        return s1.top();
+    }
+
+    int getMin() {
+        return s2.top();
+    }
+};
+
 
 #endif //LEETCODEMAC_TSOLUTION_H

@@ -1089,6 +1089,59 @@ public:
         }
         return res;
     }
+
+    double findMaxAverage(vector<int> &nums, int k) {
+        vector<int> pre(nums.size() + 1);
+        pre[0] = 0;
+        for (int i = 1; i <= nums.size(); ++i) {
+            pre[i] = pre[i - 1] + nums[i - 1];
+        }
+        double res = -INFINITY;
+        for (int i = 0; i <= nums.size() - k; ++i) {
+            res = max((double) (pre[i + k] - pre[i]) / k, res);
+        }
+        return res;
+    }
+
+    TreeNode *mergeTrees(TreeNode *t1, TreeNode *t2) {
+        if (t1 == nullptr) {
+            return t2;
+        }
+        if (t2 == nullptr) {
+            return t1;
+        }
+        TreeNode *res = new TreeNode(t1->val + t2->val);
+        res->left = mergeTrees(t1->left, t2->left);
+        res->right = mergeTrees(t1->right, t2->right);
+        return res;
+    }
+
+    int hammingDistance(int x, int y) {
+        if (x > y) swap(x, y);
+        int res = 0;
+        while (x != 0) {
+            if ((x & 1) != (y & 1)) {
+                res++;
+            }
+            x >>= 1;
+            y >>= 1;
+        }
+        while (y != 0) {
+            if ((y & 1) != 0) {
+                res++;
+            }
+            y >>= 1;
+        }
+        return res;
+    }
+
+    TreeNode *invertTree(TreeNode *root) {
+        if (root == nullptr) return nullptr;
+        swap(root->right,root->left);
+        invertTree(root->left);
+        invertTree(root->right);
+        return root;
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION3_H
