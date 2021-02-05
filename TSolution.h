@@ -15,7 +15,6 @@
 
 class TSolution {
 public:
-    vector<int> a(2);
 
     void deleteNode(ListNode *node) {
         node->val = node->next->val;
