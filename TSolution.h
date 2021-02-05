@@ -15,6 +15,8 @@
 
 class TSolution {
 public:
+    vector<int> a(2);
+
     void deleteNode(ListNode *node) {
         node->val = node->next->val;
         node->next = node->next->next;
@@ -398,6 +400,98 @@ public:
         res = max(t, res);
         return t + 1;
     }
+
+    void rotate(vector<vector<int>> &matrix) {
+        for (int i = 0; i < matrix.size(); ++i) {
+            for (int j = 0; j <= matrix.size() / 2; ++j) {
+                swap(matrix[i][j], matrix[i][matrix.size() - 1 - j]);
+            }
+        }
+        for (int i = 0; i < matrix.size(); ++i) {
+            for (int j = 0; j < matrix.size() - i - 1; ++j) {
+                swap(matrix[i][j], matrix[matrix.size() - 1 - j][matrix.size() - 1 - i]);
+            }
+        }
+    }
+
+    vector<vector<int>> reconstructQueue(vector<vector<int>> &people) {
+
+    }
+
+    int countBalls(int lowLimit, int highLimit) {
+        vector<int> tmp(46);
+        for (int i = lowLimit; i <= highLimit; ++i) {
+            int s = 0;
+            int t = i;
+            while (t != 0) {
+                s += t % 10;
+                t /= 10;
+            }
+            tmp[s]++;
+        }
+        return *max_element(tmp.begin(), tmp.end());
+    }
+
+    vector<int> restoreArray(vector<vector<int>> &adjacentPairs) {
+        vector<int> ans;
+        set<int> st;
+        unordered_map<int, vector<int>> mp;
+        int n = adjacentPairs.size();
+        for (int i = 0; i < n; ++i) {
+            mp[adjacentPairs[i][0]].emplace_back(adjacentPairs[i][1]);
+            mp[adjacentPairs[i][1]].emplace_back(adjacentPairs[i][0]);
+        }
+        int start;
+        for (const auto &m:mp) {
+            if (m.second.size() == 1) {
+                start = m.first;
+                st.insert(start);
+                ans.push_back(start);
+                break;
+            }
+        }
+        int t = start;
+        while (st.size() < n + 1) {
+            for (const auto &m:mp[t]) {
+                if (st.find(m) == st.end()) {
+                    t = m;
+                    ans.push_back(t);
+                    st.insert(t);
+                    break;
+                }
+            }
+        }
+        return ans;
+    }
+
+    bool checkPartitioning(string s) {
+        bool dp[2010][2010]{false};
+        int n = s.size();
+        for (int i = 0; i < n; ++i) {
+            dp[i][i] = true;
+            if (i < n - 1) {
+                if (s[i] == s[i + 1]) {
+                    dp[i][i + 1] = true;
+                }
+            }
+        }
+        for (int l = 3; l <= n; ++l) {
+            for (int i = 0; i + l - 1 < n; ++i) {
+                int j = i + l - 1;
+                if (s[i] == s[j] && dp[i + 1][j - 1]) {
+                    dp[i][j] = true;
+                }
+            }
+        }
+        for (int s = 1; s <= n - 2; ++s) {
+            for (int e = s; e <= n - 2; ++e) {
+                if (dp[0][s - 1] && dp[s][e] && dp[e + 1][n - 1]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 };
 
 class MedianFinder {
@@ -432,6 +526,41 @@ public:
             return (double) maxHeap.top();
         }
     }
+
+    int equalSubstring(string s, string t, int maxCost) {
+        vector<int> tmp(s.size());
+        for (int i = 0; i < s.size(); ++i) {
+            tmp[i] = abs(s[i] - t[i]);
+        }
+        int b = 0, e = 0, res = 0, sum = 0;
+        for (; e < s.size(); ++e) {
+            sum += tmp[e];
+            while (sum > maxCost) {
+                res = max(res, e - b);
+                sum -= tmp[b];
+                b++;
+            }
+        }
+        return res;
+    }
+
+    vector<vector<int>> subsets(vector<int> &nums) {
+        vector<int> path;
+        vector<vector<int>> res;
+        subsetsHelp(nums, res, path, 0);
+        return res;
+    }
+
+    void subsetsHelp(vector<int> &nums, vector<vector<int>> &res, vector<int> &path, int i) {
+        res.emplace_back(path);
+        for (int k = i; k < nums.size(); ++k) {
+            path.emplace_back(nums[k]);
+            subsetsHelp(nums, res, path, i + 1);
+            path.pop_back();
+        }
+    }
+
+
 };
 
 class LRUCache {

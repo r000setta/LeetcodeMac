@@ -27,6 +27,9 @@ int main() {
     node1.left = &node2;
     node2.left = &node3;
     vector<string> v2{"blw", "bwl", "wlb"};
-    ts.diameterOfBinaryTree(&node1);
+    vector<vector<int>> v3{{1, 2, 3},
+                           {4, 5, 6},
+                           {7, 8, 9}};
+    ts.countBalls(1, 10);
 //    s3.stoneGameVII(v1);
 }
