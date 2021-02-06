@@ -27,9 +27,11 @@ int main() {
     node1.left = &node2;
     node2.left = &node3;
     vector<string> v2{"blw", "bwl", "wlb"};
-    vector<vector<int>> v3{{1, 2, 3},
-                           {4, 5, 6},
-                           {7, 8, 9}};
-    ts.countBalls(1, 10);
+    vector<vector<int>> v3{{3,  10, 9, 5,  5,  7},
+                           {0,  1,  7, 3,  8,  1},
+                           {9,  3,  0, 6,  1,  6},
+                           {10, 2,  9, 10, 10, 7}};
+    s3.kthLargestValue(v3, 18);
+//    ts.countBalls(1, 10);
 //    s3.stoneGameVII(v1);
 }

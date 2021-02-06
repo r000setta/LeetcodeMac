@@ -491,6 +491,20 @@ public:
         }
         return false;
     }
+
+    int maxScore(vector<int> &cardPoints, int k) {
+        int n = cardPoints.size();
+        int size = n - k;
+        int sum = accumulate(cardPoints.begin(), cardPoints.begin() + size, 0);
+        int minSum = sum;
+        for (int i = size; i < n; ++i) {
+            sum += cardPoints[i] - cardPoints[i - size];
+            minSum = min(minSum, sum);
+        }
+        return accumulate(cardPoints.begin(), cardPoints.end(), 0) - minSum;
+    }
+
+
 };
 
 class MedianFinder {
@@ -559,7 +573,73 @@ public:
         }
     }
 
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
+        int idx = 0;
+        map<int, int> mp;
+        for (int i = 0; i < inorder.size(); ++i) {
+            mp[inorder[i]] = i;
+        }
+        return buildTreeHelp(preorder, mp, idx, 0, inorder.size() - 1);
+    }
 
+    TreeNode *buildTreeHelp(vector<int> &pre, map<int, int> &mp, int &idx, int left, int right) {
+        if (left > right) return nullptr;
+        int val = pre[idx++];
+        auto *res = new TreeNode(val);
+        int inIdx = mp[val];
+        res->left = buildTreeHelp(pre, mp, idx, left, inIdx - 1);
+        res->right = buildTreeHelp(pre, mp, idx, inIdx + 1, right);
+        return res;
+    }
+};
+
+
+class Trie {
+public:
+    bool isEnd;
+    vector<Trie *> next;
+
+    /** Initialize your data structure here. */
+    Trie() {
+        isEnd = false;
+        next = vector<Trie *>(26);
+    }
+
+    /** Inserts a word into the trie. */
+    void insert(string word) {
+        Trie *node = this;
+        for (char c:word) {
+            if (node->next[c - 'a'] == nullptr) {
+                node->next[c - 'a'] = new Trie();
+            }
+            node = node->next[c - 'a'];
+        }
+        node->isEnd = true;
+    }
+
+    /** Returns if the word is in the trie. */
+    bool search(string word) {
+        Trie *node = this;
+        for (char c:word) {
+            node = node->next[c - 'a'];
+            if (node == nullptr) {
+                return false;
+            }
+        }
+        return node->isEnd;
+    }
+
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) {
+        Trie *node = this;
+        for (char c:prefix) {
+            node = node->next[c - 'a'];
+            if (node == nullptr) {
+                return false;
+            }
+        }
+        return true;
+    }
 };
 
 class LRUCache {

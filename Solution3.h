@@ -1137,10 +1137,116 @@ public:
 
     TreeNode *invertTree(TreeNode *root) {
         if (root == nullptr) return nullptr;
-        swap(root->right,root->left);
+        swap(root->right, root->left);
         invertTree(root->left);
         invertTree(root->right);
         return root;
+    }
+
+    int minPathSum(vector<vector<int>> &grid) {
+        int dp[201][201]{0};
+        dp[0][0] = grid[0][0];
+        for (int i = 1; i < grid.size(); ++i) {
+            dp[i][0] = dp[i - 1][0] + grid[i][0];
+        }
+        for (int j = 1; j < grid[0].size(); ++j) {
+            dp[0][j] = dp[0][j - 1] + grid[0][j];
+        }
+        for (int i = 1; i < grid.size(); ++i) {
+            for (int j = 1; j < grid[0].size(); ++j) {
+                dp[i][j] = min(dp[i][j - 1], dp[i - 1][j]) + grid[i][j];
+            }
+        }
+        return dp[grid.size() - 1][grid[0].size() - 1];
+    }
+
+    string maximumTime(string time) {
+        if (time[0] == '?') {
+            if (time[1] != '?' && time[1] > '3') {
+                time[0] = '1';
+            } else {
+                time[0] = '2';
+            }
+        }
+        if (time[1] == '?') {
+            if (time[0] == '2') {
+                time[1] = '3';
+            } else {
+                time[1] = '9';
+            }
+        }
+        if (time[2] == '?') {
+            time[2] = '5';
+        }
+        if (time[3] == '?') {
+            time[3] = '9';
+        }
+        return time;
+    }
+
+    int minCharacters(string a, string b) {
+        int n = a.size(), m = b.size();
+        vector<int> va(26, 0), vb(26, 0);
+        for (char c:a) va[c - 'a']++;
+        for (char c:b) vb[c - 'a']++;
+
+        int ret = m + n;
+        int case1 = ret;
+        for (int i = 0; i < 25; ++i) {
+            int cur = 0;
+            for (int j = i + 1; j < 26; ++j) cur += va[j];
+            for (int j = 0; j <= i; ++j) cur += vb[j];
+            case1 = min(case1, cur);
+        }
+        int case2 = ret;
+        for (int i = 0; i < 25; ++i) {
+            int cur = 0;
+            for (int j = i + 1; j < 26; ++j) cur += vb[j];
+            for (int j = 0; j <= i; ++j) cur += va[j];
+            case2 = min(case2, cur);
+        }
+        int case3 = ret;
+        for (int i = 0; i < 26; ++i) {
+            int cur = 0;
+            for (int j = 0; j < 26; ++j) {
+                if (j == i) continue;
+                cur += va[j] + vb[j];
+            }
+            case3 = min(case3, cur);
+        }
+        ret = min(case1, min(case2, case3));
+        return ret;
+    }
+
+    int kthLargestValue(vector<vector<int>> &matrix, int k) {
+        vector<vector<int>> dp(matrix.size(), vector<int>(matrix[0].size(), 0));
+        dp[0][0] = matrix[0][0];
+        priority_queue<int, vector<int>, greater<>> pq;
+        pq.push(matrix[0][0]);
+        for (int i = 1; i < matrix.size(); ++i) {
+            dp[i][0] = dp[i - 1][0] ^ matrix[i][0];
+            pq.push(dp[i][0]);
+            if (pq.size() > k) {
+                pq.pop();
+            }
+        }
+        for (int i = 1; i < matrix[0].size(); ++i) {
+            dp[0][i] = dp[0][i - 1] ^ matrix[0][i];
+            pq.push(dp[0][i]);
+            if (pq.size() > k) {
+                pq.pop();
+            }
+        }
+        for (int i = 1; i < matrix.size(); ++i) {
+            for (int j = 1; j < matrix[0].size(); ++j) {
+                dp[i][j] = dp[i - 1][j] ^ dp[i][j - 1] ^ dp[i - 1][j - 1] ^ matrix[i][j];
+                pq.push(matrix[i][j]);
+                if (pq.size() > k) {
+                    pq.pop();
+                }
+            }
+        }
+        return pq.top();
     }
 };
 
