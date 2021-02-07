@@ -31,7 +31,9 @@ int main() {
                            {0,  1,  7, 3,  8,  1},
                            {9,  3,  0, 6,  1,  6},
                            {10, 2,  9, 10, 10, 7}};
-    s3.kthLargestValue(v3, 18);
+    vector<int> v4{4, 2, 1};
+    s3.checkPossibility(v4);
+//    s3.kthLargestValue(v3, 18);
 //    ts.countBalls(1, 10);
 //    s3.stoneGameVII(v1);
 }

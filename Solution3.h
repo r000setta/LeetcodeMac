@@ -1248,6 +1248,69 @@ public:
         }
         return pq.top();
     }
+
+    bool checkPossibility(vector<int> &nums) {
+        int n = nums.size(), cnt = 0;
+        for (int i = 0; i < n - 1; ++i) {
+            int x = nums[i], y = nums[i + 1];
+            if (x > y) {
+                cnt++;
+                if (cnt > 1) {
+                    return false;
+                }
+                if (i > 0 && y < nums[i - 1]) {
+                    nums[i + 1] = x;
+                }
+            }
+        }
+        return true;
+    }
+
+    bool check(vector<int> &nums) {
+        if (is_sorted(nums.begin(), nums.end())) {
+            return true;
+        }
+        int n = nums.size(), cnt = 0;
+        for (int i = 0; i < n - 1; ++i) {
+            if (nums[i] > nums[i + 1]) {
+                cnt++;
+                if (cnt > 1) return false;
+            }
+        }
+        return nums[n - 1] <= nums[0];
+    }
+
+    int maximumScore(int a, int b, int c) {
+        if (a + b <= c) return a + b;
+        if (a + c <= b) return a + c;
+        if (b + c <= a) return b + c;
+        return (a + b + c) / 2;
+    }
+
+    ListNode *reverseKGroup(ListNode *head, int k) {
+        ListNode *thead = head;
+        ListNode *res = new ListNode(0), *tmp = res, *tmp2 = res;
+        int cnt = 0;
+        while (thead != nullptr) {
+            cnt++;
+            thead = thead->next;
+        }
+        int n = cnt / k;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < k; ++j) {
+                ListNode *t = head->next;
+                head->next = tmp2->next;
+                tmp2->next = head;
+                head = t;
+            }
+            while (tmp->next != nullptr) {
+                tmp = tmp->next;
+            }
+            tmp2 = tmp;
+        }
+        tmp2->next = head;
+        return res->next;
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION3_H
