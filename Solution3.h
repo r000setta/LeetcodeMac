@@ -1311,6 +1311,70 @@ public:
         tmp2->next = head;
         return res->next;
     }
+
+    int maxTurbulenceSize(vector<int> &A) {
+        if (A.size() <= 1) return A.size();
+        int res = 0;
+        int l = 0, r = 1;
+        while (r < A.size()) {
+            if (r - l <= 1) {
+                if (A[l] != A[r]) {
+                    res = max(r - l + 1, res);
+                    r++;
+                    continue;
+                } else {
+                    l++;
+                    r++;
+                }
+            } else {
+                if ((A[r - 1] < A[r - 2] && A[r - 1] < A[r]) || (A[r - 1] > A[r - 2] && A[r - 1] > A[r])) {
+                    res = max(r - l + 1, res);
+                    r++;
+                } else if (A[r] == A[r - 1]) {
+                    l = r;
+                    r++;
+                } else {
+                    l = r - 1;
+                    r++;
+                }
+            }
+        }
+        res = max(r - l, res);
+        return res;
+    }
+
+    int sumOfUnique(vector<int> &nums) {
+        vector<int> v(101);
+        for (int i:nums) v[i]++;
+        int sum = 0;
+        for (int i = 0; i < v.size(); ++i) {
+            if (v[i] == 1) {
+                sum += i;
+            }
+        }
+        return sum;
+    }
+
+    int maxAbsoluteSum(vector<int> &nums) {
+        vector<int> pre(nums.size() + 1, 0);
+        for (int i = 1; i < pre.size(); ++i) {
+            pre[i] = pre[i - 1] + nums[i - 1];
+        }
+        sort(pre.begin(), pre.end());
+        return pre[nums.size()] - pre[0];
+    }
+
+    int minimumLength(string s) {
+        int l = 0, r = s.size() - 1;
+        while (s[l] == s[r] && l < r) {
+            while (s[l] == s[l + 1] && l < r) l++;
+            while (s[r] == s[r - 1] && l < r) r--;
+            l++;
+            r--;
+            if (l >= r) break;
+        }
+        return max(r - l + 1, 0);
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION3_H

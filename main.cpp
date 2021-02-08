@@ -32,7 +32,8 @@ int main() {
                            {9,  3,  0, 6,  1,  6},
                            {10, 2,  9, 10, 10, 7}};
     vector<int> v4{4, 2, 1};
-    s3.checkPossibility(v4);
+    vector<int> v5{9, 4, 2, 10, 7, 8, 8, 1, 9};
+    cout << s3.maxTurbulenceSize(v5);
 //    s3.kthLargestValue(v3, 18);
 //    ts.countBalls(1, 10);
 //    s3.stoneGameVII(v1);
