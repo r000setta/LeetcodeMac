@@ -1375,6 +1375,97 @@ public:
         }
         return max(r - l + 1, 0);
     }
+
+    int largestAltitude(vector<int> &gain) {
+        vector<int> v(gain.size() + 1, 0);
+        int res = 0;
+        for (int i = 1; i < v.size(); ++i) {
+            v[i] = v[i - 1] + gain[i - 1];
+            res = max(res, v[i]);
+        }
+        return res;
+    }
+
+    int minimumTeachings(int n, vector<vector<int>> &languages, vector<vector<int>> &friendships) {
+
+    }
+
+    int GetMostDistinct(vector<int>& A, int K) {
+        unordered_map<int, int> mp;
+        int left = 0, right = 0, ret = 0;
+        while (right < A.size()) {
+            ++mp[A[right++]];
+            while (mp.size() > K) {
+                --mp[A[left]];
+                if (mp[A[left]] == 0) mp.erase(A[left]);
+                ++left;
+            }
+            // 如果这里改成 ret = max(ret, right - left)，那么此函数就是 LeetCode 904 题的解：求长度最大的子数组（此子数组中包含不同整数个数最多为K）
+            ret += right - left;
+        }
+        return ret;
+    }
+
+    int subarraysWithKDistinct(vector<int>& A, int K) {
+        return GetMostDistinct(A, K) - GetMostDistinct(A, K - 1);
+    }
+};
+
+class NumArray {
+public:
+    vector<int> tree;
+    int n;
+
+    NumArray(vector<int> &nums) {
+        if (nums.size() > 0) {
+            n = nums.size();
+            tree = vector<int>(n * 2);
+            buildTree(nums);
+        }
+    }
+
+    void buildTree(vector<int> &nums) {
+        for (int i = n, j = 0; i < 2 * n; ++i, ++j) {
+            tree[i] = nums[j];
+        }
+        for (int i = n - 1; i > 0; --i) {
+            tree[i] = tree[i * 2] + tree[i * 2 + 1];
+        }
+    }
+
+    void update(int index, int val) {
+        index += n;
+        tree[index] = val;
+        while (index > 0) {
+            int left = index, right = index;
+            if (index % 2 == 0) {
+                right = index + 1;
+            } else {
+                left = index - 1;
+            }
+            tree[index / 2] = tree[left] + tree[right];
+            index /= 2;
+        }
+    }
+
+    int sumRange(int left, int right) {
+        left += n;
+        right += n;
+        int sum = 0;
+        while (left <= right) {
+            if ((left % 2) == 1) {
+                sum += tree[left];
+                left++;
+            }
+            if ((right % 2) == 0) {
+                sum += tree[right];
+                right--;
+            }
+            left /= 2;
+            right /= 2;
+        }
+        return sum;
+    }
 };
 
 #endif //LEETCODEMAC_SOLUTION3_H
