@@ -36,7 +36,6 @@ int main() {
     vector<vector<int>> v6{{1, 2},
                            {2, 3},
                            {3, 4}};
-    s3.maxEvents(v6);
 //    ts.countBalls(1, 10);
 //    s3.stoneGameVII(v1);
 }
