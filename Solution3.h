@@ -1403,6 +1403,7 @@ public:
         return false;
     }
 
+
     int GetMostDistinct(vector<int> &A, int K) {
         unordered_map<int, int> mp;
         int left = 0, right = 0, ret = 0;
@@ -1421,6 +1422,128 @@ public:
 
     int subarraysWithKDistinct(vector<int> &A, int K) {
         return GetMostDistinct(A, K) - GetMostDistinct(A, K - 1);
+    }
+
+    int characterReplacement(string s, int k) {
+        vector<int> v(26, 0);
+        int tmp = 0;
+        int l = 0, r = 0;
+        while (r < s.size()) {
+            v[s[r] - 'A']++;
+            tmp = max(tmp, v[s[r] - 'A']);
+            if (r - l + 1 > tmp + k) {
+                v[s[l] - 'A']--;
+                l++;
+            }
+        }
+        return s.size() - l;
+    }
+
+    int numSubarrayProductLessThanK(vector<int> &nums, int k) {
+        if (k <= 1) return 0;
+        int p = 1, res = 0, l = 0;
+        for (int r = 0; r < nums.size(); ++r) {
+            p *= nums[r];
+            while (p >= k) p /= nums[l++];
+            res += r - l + 1;
+        }
+        return res;
+    }
+
+    ListNode *removeNthFromEnd(ListNode *head, int n) {
+        ListNode *t = new ListNode(0);
+        t->next = head;
+        ListNode *f = t, *s = t;
+        for (int i = 0; i < n; ++i) {
+            f = f->next;
+        }
+        while (f->next != nullptr) {
+            f = f->next;
+            s = s->next;
+        }
+        ListNode *del = s->next;
+        s->next = del->next;
+        return t->next;
+    }
+
+    int totalFruit(vector<int> &tree) {
+        int l = 0, r = 0;
+        int res = 0;
+        unordered_map<int, int> mp;
+        while (r < tree.size()) {
+            if (tree[r] == 0) {
+                l = r + 1;
+                r++;
+                mp.clear();
+                continue;
+            }
+            if (r - l + 1 <= 2) {
+                mp[tree[r]]++;
+                r++;
+                continue;
+            }
+            mp[tree[r]]++;
+            if (mp.size() > 2) {
+                res = max(res, r - l);
+                while (mp.size() > 2) {
+                    mp[tree[l]]--;
+                    if (mp[tree[l]] == 0) {
+                        mp.erase(tree[l]);
+                    }
+                    l++;
+                }
+            }
+            r++;
+        }
+        res = max(res, r - l);
+        return res;
+    }
+
+    int numRescueBoats(vector<int> &people, int limit) {
+        sort(people.begin(), people.end());
+        int i = 0, j = people.size() - 1;
+        int res = 0;
+        while (i <= j) {
+            res++;
+            if (people[i] + people[j] <= limit) {
+                i++;
+            }
+            j--;
+        }
+        return res;
+    }
+
+    int findPairs(vector<int> &nums, int k) {
+        if (nums.size() < 2) return 0;
+        sort(nums.begin(), nums.end());
+        int count = 0;
+
+    }
+};
+
+class KthLargest {
+public:
+    priority_queue<int, vector<int>, greater<>> pq;
+    int k;
+
+    KthLargest(int k, vector<int> &nums) {
+        pq = priority_queue<int, vector<int>, greater<>>();
+        this->k = k;
+
+        for (int n:nums) {
+            pq.push(n);
+            if (pq.size() > k) {
+                pq.pop();
+            }
+        }
+    }
+
+    int add(int val) {
+        pq.push(val);
+        if (pq.size() > k) {
+            pq.pop();
+        }
+        return pq.top();
     }
 };
 

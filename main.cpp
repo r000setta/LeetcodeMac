@@ -33,9 +33,8 @@ int main() {
                            {10, 2,  9, 10, 10, 7}};
     vector<int> v4{4, 2, 1};
     vector<int> v5{9, 4, 2, 10, 7, 8, 8, 1, 9};
-    vector<vector<int>> v6{{1, 2},
-                           {2, 3},
-                           {3, 4}};
+    vector<int> v6{3, 3, 3, 1, 2, 1, 1, 2, 3, 3, 4};
+    s3.totalFruit(v6);
 //    ts.countBalls(1, 10);
 //    s3.stoneGameVII(v1);
 }

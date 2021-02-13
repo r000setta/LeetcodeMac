@@ -504,7 +504,53 @@ public:
         return accumulate(cardPoints.begin(), cardPoints.end(), 0) - minSum;
     }
 
+    bool minWindowCheck(vector<int> &vs, vector<int> &vt) {
+        for (int i = 0; i < 52; ++i) {
+            if (vt[i] != 0 && vt[i] > vs[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    string minWindow(string s, string t) {
+        string res = s + "1";
+        vector<int> vs(58), vt(58);
+        for (char c:t) vt[c - 'A']++;
+        int l = 0, r = 0;
+        while (r < s.size()) {
+            vs[s[r] - 'A']++;
+            if (r - l + 1 < t.size()) {
+                r++;
+                continue;
+            }
+            while (minWindowCheck(vs, vt) && l <= r) {
+                string tmp = s.substr(l, r - l + 1);
+                if (tmp.size() < res.size()) res = tmp;
+                vs[s[l] - 'A']--;
+                l++;
+            }
+            r++;
+        }
+        return res.size() == s.size() + 1 ? "" : res;
+    }
+
+    int minSubArrayLen(int target, vector<int> &nums) {
+        int l = 0, r = 0;
+        int res = nums.size() + 1;
+        int cur = 0;
+        while (r < nums.size()) {
+            cur += nums[r];
+            while (cur >= target && l <= r) {
+                res = min(r - l + 1, res);
+                if (res == 1) return res;
+                cur -= nums[l];
+                l++;
+            }
+            r++;
+        }
+        return res == nums.size() + 1 ? 0 : res;
+    }
 };
 
 class MedianFinder {
