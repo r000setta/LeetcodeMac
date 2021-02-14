@@ -1519,6 +1519,81 @@ public:
         int count = 0;
 
     }
+
+    int minSwapsCouplesFind(vector<int> &p, int x) {
+        if (p[x] == x) return x;
+        return p[x] = minSwapsCouplesFind(p, p[x]);
+    }
+
+    void minSwapsCouplesUnion(vector<int> &p, int x, int y) {
+        int px = minSwapsCouplesFind(p, x);
+        int py = minSwapsCouplesFind(p, y);
+        p[px] = py;
+    }
+
+    int minSwapsCouples(vector<int> &row) {
+        int n = row.size();
+        vector<int> p(n);
+        int c = 0;
+        for (int i = 0; i < n; ++i) p[i] = i;
+        for (int i = 0; i < n - 1; i += 2) {
+            int n1 = row[i] / 2, n2 = row[i + 1] / 2;
+            if (n1 != n2) {
+                if (minSwapsCouplesFind(p, n1) == minSwapsCouplesFind(p, n2)) {
+                    c++;
+                } else {
+                    minSwapsCouplesUnion(p, n1, n2);
+                }
+            } else {
+                c++;
+            }
+        }
+        return n / 2 - c;
+    }
+
+    bool canPlaceFlowers(vector<int> &flowerbed, int n) {
+        if (n == 0) return true;
+        for (int i = 0; i < flowerbed.size(); ++i) {
+            if (flowerbed[i] == 0 && (i == 0 || flowerbed[i - 1] == 0) &&
+                (i == flowerbed.size() - 1 || flowerbed[i + 1] == 0)) {
+                n--;
+                if (n <= 0) return true;
+                flowerbed[i] = 1;
+            }
+        }
+        return false;
+    }
+
+    int minCost(string s, vector<int> &cost) {
+        int res = 0;
+        int i = 0;
+        while (i < s.size()) {
+            char cur = s[i];
+            int m = 0, sum = 0;
+            while (i < s.size() && cur == s[i]) {
+                m = max(m, cost[i]);
+                sum += cost[i];
+                ++i;
+            }
+            res += (sum - m);
+        }
+        return res;
+    }
+
+    string getSmallestString(int n, int k) {
+        string res = "";
+        for (int i = n; i >= 1; --i) {
+            int t = k - 26 * (i - 1);
+            if (t > 0) {
+                res += char(t + 'a' - 1);
+                k -= t;
+            } else {
+                res += 'a';
+                k -= 1;
+            }
+        }
+        return res;
+    }
 };
 
 class KthLargest {
