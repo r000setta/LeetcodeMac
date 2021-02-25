@@ -1594,6 +1594,155 @@ public:
         }
         return res;
     }
+
+    int findMaxConsecutiveOnes(vector<int> &nums) {
+        int res = 0, l = 0;
+        while (l < nums.size()) {
+            if (nums[l] == 1) {
+                int cur = 0;
+                while (l < nums.size() && nums[l] == 1) {
+                    l++;
+                    cur++;
+                }
+                res = max(res, cur);
+            } else {
+                l++;
+            }
+        }
+        return res;
+    }
+
+    int longestOnes(vector<int> &A, int K) {
+        int l = 0, r = 0, count = 0, res = 0;
+        while (r < A.size()) {
+            count += A[r] == 0;
+            while (count > K) {
+                count -= A[l] == 0;
+                l++;
+            }
+            res = max(res, r - l + 1);
+            r++;
+        }
+        return res;
+    }
+
+    TreeNode *first = nullptr;
+
+    TreeNode *convertBiNode(TreeNode *root) {
+        TreeNode *res = nullptr;
+        convertBiNodeHelp(root, res);
+        return first;
+    }
+
+    void convertBiNodeHelp(TreeNode *root, TreeNode *pre) {
+        if (root == nullptr) return;
+        convertBiNodeHelp(root->left, pre);
+        if (pre == nullptr) {
+            pre = root;
+            first = root;
+        } else {
+            pre->right = root;
+            root->left = nullptr;
+            pre = root;
+        }
+        convertBiNodeHelp(root->right, pre);
+    }
+
+    TreeNode *balanceBST(TreeNode *root) {
+        vector<int> vec;
+        balanceBSTHelp(root, vec);
+        return balanceBSTBuild(vec, 0, vec.size() - 1);
+    }
+
+    TreeNode *balanceBSTBuild(vector<int> &vec, int l, int r) {
+        int mid = (l + r) >> 1;
+        TreeNode *res = new TreeNode(vec[mid]);
+        if (l <= mid - 1) res->left = balanceBSTBuild(vec, l, mid - 1);
+        if (r >= mid + 1) res->right = balanceBSTBuild(vec, mid + 1, r);
+        return res;
+    }
+
+    void balanceBSTHelp(TreeNode *root, vector<int> &vec) {
+        if (root == nullptr) return;
+        balanceBSTHelp(root->left, vec);
+        vec.emplace_back(root->val);
+        balanceBSTHelp(root->right, vec);
+    }
+
+    TreeNode *bstToGst(TreeNode *root) {
+        int cur = 0;
+        bstToGstHelp(root, cur);
+        return root;
+    }
+
+    void bstToGstHelp(TreeNode *root, int &cur) {
+        if (root == nullptr) return;
+        bstToGstHelp(root->right, cur);
+        cur += root->val;
+        root->val = cur;
+        bstToGstHelp(root->left, cur);
+    }
+
+    int arrayPairSum(vector<int> &nums) {
+        sort(nums.begin(), nums.end());
+        int res = 0;
+        for (int i = 0; i < nums.size(); i += 2) {
+            res += nums[i];
+        };
+        return res;
+    }
+
+    int removeCoveredIntervals(vector<vector<int>> &intervals) {
+        sort(intervals.begin(), intervals.end(), [](const auto &a, const auto &b) {
+            return a[0] == b[0] ? a[1] > b[1] : a[0] < b[0];
+        });
+        int r = 0;
+        int res = 0;
+        while (r < intervals.size() - 1) {
+            int i = 1;
+            while (r + i < intervals.size() && intervals[r][1] >= intervals[r + i][1]) {
+                res++;
+                i++;
+            }
+            r += i;
+        }
+        return intervals.size() - res;
+    }
+
+    vector<int> pancakeSort(vector<int> &arr) {
+        int n = arr.size();
+        vector<int> res;
+        for (int i = n - 1; i > 0; --i) {
+            int j = max_element(arr.begin(), arr.begin() + i + 1) - arr.begin();
+            if (j > 0) {
+                reverse(arr.begin(), arr.begin() + j + 1);
+                res.push_back(j + 1);
+            }
+            reverse(arr.begin(), arr.begin() + i + 1);
+            res.push_back(i + 1);
+        }
+        return res;
+    }
+
+    vector<vector<int>> levelOrder(TreeNode *root) {
+        vector<vector<int>> res;
+        if (root == nullptr) return res;
+        queue<TreeNode *> q;
+        q.push(root);
+        while (!q.empty()) {
+            int n = q.size();
+            vector<int> tmp;
+            for (int i = 0; i < n; ++i) {
+                auto cur = q.front();
+                q.pop();
+                tmp.emplace_back(cur->val);
+                if (cur->left) q.push(cur->left);
+                if (cur->right) q.push(cur->right);
+            }
+            res.emplace_back(tmp);
+        }
+        return res;
+    }
 };
 
 class KthLargest {
