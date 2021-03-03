@@ -237,12 +237,42 @@ public:
 
     }
 
-    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
+    int buildTreeIdx = 0;
 
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
+        unordered_map<int, int> mp;
+        for (int i = 0; i < inorder.size(); ++i) {
+            mp[inorder[i]] = i;
+        }
+        return buildTreeHelp(preorder, inorder, 0, inorder.size() - 1, mp);
+    }
+
+    TreeNode *buildTreeHelp(vector<int> &pre, vector<int> &in, int l, int r, unordered_map<int, int> &mp) {
+        if (l > r) return nullptr;
+        int val = pre[buildTreeIdx];
+        TreeNode *root = new TreeNode(val);
+        buildTreeIdx++;
+        root->left = buildTreeHelp(pre, in, l, mp[val] - 1, mp);
+        root->right = buildTreeHelp(pre, in, mp[val] + 1, r, mp);
+        return root;
+    }
+
+    int cuttingRope(int n) {
+        vector<int> dp(n + 1);
+        dp[2] = 1;
+        for (int i = 3; i <= n; ++i) {
+            for (int j = 2; j < i; ++j) {
+                dp[i] = max(dp[i], max(j * dp[i - j], j * (i - j)));
+            }
+        }
+        return dp[n];
     }
 
     int minArray(vector<int> &numbers) {
-
+        int l = 0, r = numbers.size() - 1;
+        while (l < r) {
+            int mid = (l + r) / 2;
+        }
     }
 
     TreeNode *mirrorTree(TreeNode *root) {
@@ -269,7 +299,7 @@ public:
     }
 
     string reverseParentheses(string s) {
-        stack<string> stk;
+        stack <string> stk;
         string word = "";
         for (char c:s) {
             if (c == '(') {
@@ -284,6 +314,53 @@ public:
             }
         }
         return word;
+    }
+
+    vector<string> letterCombinations(string digits) {
+        vector<string> v = {"abc", "def", "ghi", "jkl", "mno", "prqs", "tuv", "wxyz"};
+        vector<string> res;
+        string path = "";
+        letterCombinationsBP(digits, path, res, v, 0);
+        return res;
+    }
+
+    void letterCombinationsBP(string digits, string &path, vector<string> &res, vector<string> &v, int k) {
+        if (path.size() == digits.size()) {
+            res.emplace_back(path);
+            return;
+        }
+        for (int i = k; i < digits.size(); ++i) {
+            char d = digits[i];
+            for (char c:v[d - '0']) {
+                path += c;
+                letterCombinationsBP(digits, path, res, v, i + 1);
+                path.pop_back();
+            }
+        }
+    }
+
+    vector<string> generateParenthesis(int n) {
+        vector<string> res;
+        string path;
+        generateParenthesisBP(res, path, 0, 0, n);
+        return res;
+    }
+
+    void generateParenthesisBP(vector<string> &res, string &path, int l, int r, int n) {
+        if (path.size() == n * 2) {
+            res.emplace_back(path);
+            return;
+        }
+        if (l < n) {
+            path.push_back('(');
+            generateParenthesisBP(res, path, l + 1, r, n);
+            path.pop_back();
+        }
+        if (r < l) {
+            path.push_back(')');
+            generateParenthesisBP(res, path, l, r + 1, n);
+            path.pop_back();
+        }
     }
 
     bool isToeplitzMatrix(vector<vector<int>> &matrix) {
@@ -419,6 +496,10 @@ public:
         }
     }
 
+    bool isValidSudoku(vector<vector<char>> &board) {
+
+    }
+
     vector<vector<int>> transpose(vector<vector<int>> &matrix) {
         int m = matrix.size(), n = matrix[0].size();
         vector<vector<int>> res(n, vector<int>(m));
@@ -431,6 +512,43 @@ public:
     }
 
     bool validateStackSequences(vector<int> &pushed, vector<int> &popped) {
+        stack<int> stk;
+        int l = 0;
+        for (int i = 0; i < pushed.size(); ++i) {
+            stk.push(pushed[i]);
+            while (!stk.empty() && stk.top() == popped[l]) {
+                stk.pop();
+                l++;
+            }
+        }
+        return stk.empty();
+    }
+
+    vector<vector<int>> pathSum(TreeNode *root, int sum) {
+        vector<vector<int>> res;
+        vector<int> path;
+        pathSumBP(root, sum, res, path);
+        return res;
+    }
+
+    void pathSumBP(TreeNode *root, int sum, vector<vector<int>> &res, vector<int> &path) {
+        if (root == nullptr) return;
+        path.emplace_back(root->val);
+        sum -= root->val;
+        if (sum == 0 && root->left == nullptr && root->right == nullptr) {
+            res.emplace_back(path);
+        }
+        pathSumBP(root->left, sum, res, path);
+        pathSumBP(root->right, sum, res, path);
+        path.pop_back();
+    }
+
+    bool increasingTriplet(vector<int> &nums) {
+        int one = INT_MIN, two = INT_MIN;
+
+    }
+
+    int reversePairs(vector<int> &nums) {
 
     }
 
@@ -455,7 +573,7 @@ public:
             if ((nums[r] & 1) != 1) {
                 r--;
                 continue;
-           }
+            }
             swap(nums[l], nums[r]);
         }
         return nums;
@@ -491,20 +609,26 @@ public:
 
     }
 
-    double myPow(double x, int n) {
-        if (x == 0) return 0;
-        long b = n;
-        double res = 1.0;
-        if (b < 0) {
-            x = 1 / x;
-            b = -b;
+    vector<int> findSwapValues(vector<int> &array1, vector<int> &array2) {
+        sort(array1.begin(), array1.end());
+        sort(array2.begin(), array2.end());
+        int s1 = accumulate(array1.begin(), array1.end(), 0);
+        int s2 = accumulate(array1.begin(), array1.end(), 0);
+        if (s2 > s1) {
+            swap(array1, array2);
         }
-        while (b > 0) {
-            if ((b & 1) == 1) res *= x;
-            x *= x;
-            b >>= 1;
+        int i = 0, j = 0, tar = abs(s1 - s2) / 2;
+        while (i < array1.size() && j < array2.size()) {
+            int x = i >= array1.size() ? array1.back() : array1[i];
+            int y = j >= array2.size() ? array2.back() : array2[j];
+            if (x - y == tar) return vector<int>{x, y};
+            if (x - y > tar) {
+                j++;
+            } else {
+                i++;
+            }
         }
-        return res;
+        return vector<int>{};
     }
 
     int strToInt(string str) {
@@ -735,6 +859,55 @@ public:
         return res;
     }
 
+    bool isMatch(string s, string p) {
+        vector<vector<bool>> dp(s.size() + 1, vector<bool>(p.size() + 1));
+        dp[0][0] = true;
+        for (int i = 1; i <= p.size(); ++i) {
+            if (p[i - 1] == '*') {
+                dp[0][i] = true;
+            } else {
+                break;
+            }
+        }
+        for (int i = 1; i < dp.size(); ++i) {
+            for (int j = 1; j < dp[0].size(); ++j) {
+                if (s[i - 1] == p[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p[j - 1] == '?') {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else if (p[j - 1] == '*') {
+                    dp[i][j] = dp[i][j - 1] | dp[i - 1][j];
+                }
+            }
+        }
+        return dp[s.size()][p.size()];
+    }
+
+    bool canJump(vector<int> &nums) {
+        int r = 0;
+        for (int i = 0; i < nums.size(); ++i) {
+            if (i > r) return false;
+            r = max(r, i + nums[i]);
+        }
+        return true;
+    }
+
+    double myPow(double x, int n) {
+        if (x == 0.0) return 0.0;
+        long b = n;
+        double res = 1;
+        if (b < 0) {
+            b = -b;
+            x = 1 / x;
+        }
+        while (b != 0) {
+            if ((b & 1) == 1) res *= x;
+            x *= x;
+            b = b >> 1;
+        }
+        return res;
+    }
+
     int trap(vector<int> &height) {
         if (height.size() < 3) return 0;
         int l = 0, r = height.size() - 1;
@@ -777,24 +950,70 @@ public:
     vector<int> findSquare(vector<vector<int>> &matrix) {
 
     }
-};
 
-class MedianFinder {
-public:
-    priority_queue<int> smallHeap;//小数，大顶堆
-    priority_queue<int, vector<int>, greater<int>> bigHeap;//大数，小顶堆
-
-    /** initialize your data structure here. */
-    MedianFinder() {
-
+    int reverse1(int x) {
+        int res = 0;
+        while (x) {
+            int t = x % 10;
+            x /= 10;
+            if (res > INT_MAX / 10 || res == INT_MAX / 10 && t > 7) return 0;
+            if (res < INT_MIN / 10 || res == INT_MIN / 10 && t < -8) return 0;
+            res = res * 10 + t;
+        }
+        return res;
     }
 
-    void addNum(int num) {
-
+    int lengthOfLongestSubstring(string s) {
+        unordered_set<char> st;
+        int res = 0;
+        int l = 0, r = 0;
+        while (r < s.size()) {
+            while (st.count(s[r])) {
+                st.erase(s[l]);
+                l++;
+            }
+            st.insert(s[r]);
+            res = max(res, r - l + 1);
+            r++;
+        }
+        return res;
     }
 
-    double findMedian() {
+    string longestPalindrome(string s) {
+        int n = s.size();
+        string ans = "";
+        vector<vector<bool>> dp(n, vector<bool>(n));
+        for (int l = 0; l < s.size(); ++l) {
+            for (int i = 0; i + l < n; ++i) {
+                int j = i + l;
+                if (l == 0) {
+                    dp[i][i] = true;
+                } else if (l == 1) {
+                    dp[i][j] = s[i] == s[j];
+                } else {
+                    dp[i][j] = (s[i] == s[j] && dp[i + 1][j - 1]);
+                }
+                if (dp[i][j] && l + 1 > ans.size()) {
+                    ans = s.substr(i, l + 1);
+                }
+            }
+        }
+        return ans;
+    }
 
+    string longestCommonPrefix(vector<string> &strs) {
+        string cur = strs[0];
+        for (int i = 0; i < cur.size(); ++i) {
+            char t = cur[i];
+            for (const auto s:strs) {
+                if (i == s.size()) return s.substr(i + 1);
+                if (s[i] == t) {
+                    if (i == 0) return "";
+                    return s.substr(i);
+                }
+            }
+        }
+        return cur;
     }
 };
 
@@ -858,6 +1077,42 @@ public:
         } else {
             return 0;
         }
+    }
+};
+
+class NumArray1 {
+public:
+    vector<int> v;
+
+    NumArray1(vector<int> &nums) {
+        v = vector<int>(nums.size() + 1);
+        v[0] = 0;
+        for (int i = 1; i < v.size(); ++i) {
+            v[i] = v[i - 1] + nums[i - 1];
+        }
+    }
+
+    int sumRange(int i, int j) {
+        return v[j + 1] - v[i];
+    }
+};
+
+class NumMatrix {
+public:
+    vector<vector<int>> v;
+
+    NumMatrix(vector<vector<int>> &matrix) {
+        if (matrix.size() == 0 || matrix[0].size() == 0) return;
+        v = vector<vector<int>>(matrix.size() + 1, vector<int>(matrix[0].size() + 1));
+        for (int i = 1; i < v.size(); ++i) {
+            for (int j = 1; j < v[0].size(); ++j) {
+                v[i][j] = v[i - 1][j] + v[i][j - 1] - v[i - 1][j - 1] + matrix[i - 1][j - 1];
+            }
+        }
+    }
+
+    int sumRegion(int row1, int col1, int row2, int col2) {
+        return v[row2 + 1][col2 + 1] - v[row2 + 1][col1] - v[row1][col2 + 1] + v[row1][col1];
     }
 };
 

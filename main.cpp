@@ -32,11 +32,11 @@ int main() {
     vector<vector<int>> v3{{1, 4},
                            {3, 6},
                            {2, 8}};
-    vector<int> v4{4, 2, 1};
-    vector<int> v5{9, 4, 2, 10, 7, 8, 8, 1, 9};
+    vector<int> v4{3, 9, 20, 15, 7};
+    vector<int> v5{9, 3, 15, 20, 7};
     vector<int> v6{3, 3, 3, 1, 2, 1, 1, 2, 3, 3, 4};
     vector<int> v7{1, 5, 6, 7, 8, 10, 6, 5, 6};
-    s5.reverseParentheses("(abcd)");
+    s5.buildTree(v4, v5);
 //    ts.countBalls(1, 10);
 //    s3.stoneGameVII(v1);
 }
