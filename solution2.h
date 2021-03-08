@@ -550,6 +550,171 @@ public:
             return res;
         }
     }
+
+    int search3(vector<int> &nums, int target) {
+        int l = 0, r = nums.size() - 1;
+        while (l < r) {
+            int mid = (l + r) / 2;
+            if (target == nums[mid]) return mid;
+            if (nums[mid] > nums[r]) {
+                if (target > nums[l] && target < nums[mid]) {
+                    r = mid - 1;
+                } else {
+                    l = mid + 1;
+                }
+            } else {
+                if (target > nums[mid] && target < nums[r]) {
+                    l = mid + 1;
+                } else {
+                    r = mid - 1;
+                }
+            }
+        }
+        if (nums[l] != target) return -1;
+        return l;
+    }
+
+    vector<int> searchRange(vector<int> &nums, int target) {
+        vector<int> res = {std::move(searchRangeLower(nums, target)), std::move(searchRangeUpper(nums, target))};
+    }
+
+    int searchRangeLower(vector<int> &nums, int target) {
+        int l = 0, r = nums.size() - 1;
+        while (l < r) {
+            int mid = (l + r) / 2;
+            if (target > nums[mid]) l = mid + 1;
+            else if (target < nums[mid]) r = mid - 1;
+            else r = mid;
+        }
+        if (nums[l] != target) return -1;
+        return l;
+    }
+
+    int searchRangeUpper(vector<int> &nums, int target) {
+        int l = 0, r = nums.size() - 1;
+        while (l < r) {
+            int mid = (l + r + 1) / 2;
+            if (target > nums[mid]) l = mid + 1;
+            else if (target < nums[mid]) r = mid - 1;
+            else l = mid;
+        }
+        if (nums[l] != target) return -1;
+        return l;
+    }
+
+    int findBestValue(vector<int> &arr, int target) {
+        sort(arr.begin(), arr.end());
+        int n = arr.size();
+        int l = 0, r = arr.size() - 1;
+        while (l < r) {
+            int mid = (l + r) / 2;
+            int sum = arr[mid] * n;
+            if (sum < target) {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+        return arr[l];
+    }
+
+    int minEatingSpeed(vector<int> &piles, int h) {
+        int l = 1, r = *max_element(piles.begin(), piles.end());
+        while (l < r) {
+            int mid = (l + r) / 2;
+            if (minEatingSpeedCheck(piles, h, mid)) {
+                r = mid;
+            } else {
+                l = mid + 1;
+            }
+        }
+        return l;
+    }
+
+    bool minEatingSpeedCheck(vector<int> &p, int h, int s) {
+        int t = 0;
+        for (int i:p) {
+            if (i % s == 0) {
+                t = t + i / s;
+            } else {
+                t = t + i / s + 1;
+            }
+        }
+        return t <= h;
+    }
+
+    int minDays(vector<int> &bloomDay, int m, int k) {
+        int l = 1, r = 1e9;
+        while (l < r) {
+            int mid = (l + r) / 2;
+
+        }
+    }
+
+    int maxDistance(vector<int> &position, int m) {
+        sort(position.begin(), position.end());
+        int l = 1, r = position.back() - position.front();
+        if (m == 2) {
+            return position.back() - position.front();
+        }
+        while (l < r) {
+            int mid = (l + r) / 2;
+            if (maxDistanceCheck(position, mid, m)) {
+                l = mid + 1;
+            } else {
+                r = mid;
+            }
+        }
+        return l;
+    }
+
+    bool maxDistanceCheck(vector<int> &pos, int mid, int m) {
+        int cnt = 0;
+        int tar = pos[0] + mid;
+        for (int i = 1; i < pos.size() - 1; ++i) {
+            if (pos[i] < tar && pos[i + 1] >= tar) {
+                cnt++;
+                tar = pos[i + 1] + mid;
+            }
+        }
+        return cnt > m - 1;
+    }
+
+    int eraseOverlapIntervals(vector<vector<int>>& intervals) {
+
+    }
+
+    int findMinArrowShots(vector<vector<int>> &points) {
+        if(points.size()==0) return 0;
+        sort(points.begin(), points.end(), [](const auto &a, const auto &b) {
+            return a[0] < b[0];
+        });
+        vector<int> cur = points[0];
+        int cnt = 1;
+        for (int i = 1; i < points.size(); ++i) {
+            if (points[i][0] > cur[1]) {
+                cnt++;
+                cur = points[i];
+            } else {
+                cur[0] = max(cur[0], points[i][0]);
+                cur[1] = min(cur[1], points[i][1]);
+            }
+        }
+        return cnt;
+    }
+
+    int missingNumber(vector<int> &nums) {
+        int l = 0, r = nums.size() - 1;
+        while (l < r) {
+            int mid = (l + r) / 2;
+            if (nums[mid] > mid) {
+                l = mid;
+            } else {
+                r = mid - 1;
+            }
+        }
+        return l;
+    }
 };
 
-#endif //LEETCODEMAC_SOLUTION2_H
+#endif //LEETCODEMAC_SOLUTION2
